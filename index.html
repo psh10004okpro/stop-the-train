@@ -3928,9 +3928,6 @@
           performSwordSwing();
         }
       }
-    } else if(state === 'title' || state === 'records' || state === 'settings'){
-      dist -= 7 * dt * 0.02;
-      if(dist <= BREACH_DIST) dist = START_DIST;
     }
 
     // the WARNING flash overlay ticks independently of game state now, since
@@ -3949,7 +3946,7 @@
     const trainScreenX = nearX + t * (farX - nearX);
     currentTrainX = trainScreenX;
 
-    if(state === 'playing' || state === 'title' || state === 'records' || state === 'settings' || state === 'banner' || state === 'sting'){
+    if(state === 'playing' || state === 'banner' || state === 'sting'){
       drawTrain(trainScreenX, 1.0, groundY, trainHP/Math.max(1,trainMaxHP), dt);
       if(stageHasSecondCar && !onSecondCar){
         drawAttachedSecondCar(trainScreenX, groundY);
@@ -4021,15 +4018,17 @@
     if(speechBubbleTimer > 0) speechBubbleTimer = Math.max(0, speechBubbleTimer - dt);
     if(screamBubbleTimer > 0) screamBubbleTimer = Math.max(0, screamBubbleTimer - dt);
     if(thxBubbleTimer > 0) thxBubbleTimer = Math.max(0, thxBubbleTimer - dt);
-    drawPlayer(px, groundY, Math.max(0,hitFlash), Math.max(0,recoil), hasMagnum, hasRifle);
-    if(hasTurret && !hasSniper){
-      drawTurret(px, groundY, Math.max(0, turretFlash));
-    }
-    if(hasCompanion){
-      drawCompanion(px - 46, groundY, Math.max(0, companionFlash));
-    }
-    if(hasDrone){
-      drawDrone(px, groundY, Math.max(0, droneFlash));
+    if(state === 'playing' || state === 'banner' || state === 'sting' || state === 'settle' || state === 'exploding'){
+      drawPlayer(px, groundY, Math.max(0,hitFlash), Math.max(0,recoil), hasMagnum, hasRifle);
+      if(hasTurret && !hasSniper){
+        drawTurret(px, groundY, Math.max(0, turretFlash));
+      }
+      if(hasCompanion){
+        drawCompanion(px - 46, groundY, Math.max(0, companionFlash));
+      }
+      if(hasDrone){
+        drawDrone(px, groundY, Math.max(0, droneFlash));
+      }
     }
 
     updateBullets(dt);
