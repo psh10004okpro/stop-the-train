@@ -1562,28 +1562,21 @@
     showSting();
   }
 
+  const PLAYER_SPR = { destH: 138, ax: 0.40, mNx: 0.985, mNy: 0.175 };
   function getPlayerMuzzle(px, groundY){
-    const bodyY = groundY - 46;
-    if(hasSniper){
-      const gx = px+14, gy = bodyY+8;
-      return { x: gx+62, y: gy };
-    }
-    if(hasTurret){
+    if(hasTurret && !hasSniper){
       const gx = px + TURRET_OFFSET_X, gy = groundY - 34;
       return { x: gx+34, y: gy };
     }
-    if(hasMinigun){
-      const gx = px+14, gy = bodyY+7;
-      return { x: gx+58, y: gy+3 };
+    if(sprOk('player')){
+      const destH = PLAYER_SPR.destH;
+      const destW = destH * (SPR.player.naturalWidth / SPR.player.naturalHeight);
+      const feetX = px + 8;
+      const x0 = feetX - destW * PLAYER_SPR.ax;
+      const y0 = groundY + 2 - destH;
+      return { x: x0 + destW * PLAYER_SPR.mNx, y: y0 + destH * PLAYER_SPR.mNy };
     }
-    if(hasRifle){
-      const gx = px+16, gy = bodyY+7;
-      return { x: gx+56, y: gy+3 };
-    }
-    if(hasMagnum){
-      const gx = px+22, gy = bodyY+6;
-      return { x: gx+45, y: gy+1.5 };
-    }
+    const bodyY = groundY - 46;
     return { x: px+48, y: bodyY+13 };
   }
 
@@ -1985,11 +1978,11 @@
     bgOffset = (bgOffset + 0.35 + approachSpeedSafe()*0.008) % 90;
 
     if(sprOk('bgPlay')){
-      const pan = (bgOffset * 0.35) % W;
-      ctx.drawImage(SPR.bgPlay, -pan, 0, W, H);
-      ctx.drawImage(SPR.bgPlay, W - pan, 0, W, H);
-      ctx.fillStyle = 'rgba(8,10,18,0.28)';
-      ctx.fillRect(0, groundY, W, H-groundY);
+      const img = SPR.bgPlay;
+      const srcH = img.naturalHeight * 0.58;
+      const pan = (bgOffset * 0.25) % W;
+      ctx.drawImage(img, 0, 0, img.naturalWidth, srcH, -pan, 0, W, groundY);
+      ctx.drawImage(img, 0, 0, img.naturalWidth, srcH, W-pan, 0, W, groundY);
     } else {
       ctx.drawImage(paint.sky.c, 0, 0, paint.sky.w, paint.sky.h);
       ctx.save();
@@ -2010,7 +2003,7 @@
     });
 
     // rail bed
-    ctx.fillStyle = sprOk('bgPlay') ? 'rgba(10,12,20,0.55)' : '#10160f';
+    ctx.fillStyle = sprOk('bgPlay') ? '#12141c' : '#10160f';
     ctx.fillRect(0, groundY, W, H-groundY);
 
     // sleepers with shading
@@ -2076,7 +2069,7 @@
       ctx.fillStyle = 'rgba(0,0,0,0.45)';
       ctx.beginPath(); ctx.ellipse(px+10, groundY+3, 30, 7, 0, 0, Math.PI*2); ctx.fill();
       ctx.translate(kick, 0);
-      drawSprite(SPR.player, px + 6, groundY + 2, 132, 0.5);
+      drawSprite(SPR.player, px + 8, groundY + 2, PLAYER_SPR.destH, PLAYER_SPR.ax);
       if(flashT > 0){
         const m = getPlayerMuzzle(px, groundY);
         const r = (hasSniper ? 22 : 16) * flashT + 5;
