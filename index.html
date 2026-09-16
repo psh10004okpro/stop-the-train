@@ -1967,61 +1967,33 @@
   shopContinueBtn.addEventListener('click', closeShop);
 
   // ---------- Rendering ----------
-  let bgOffset = 0;
-  let bgScroll = 0;
-
   function approachSpeedSafe(){
     return (state==='playing') ? approachSpeed : 6;
   }
 
-  function drawTiledX(img, dx, dy, destW, destH, scrollX){
-    let tileW = destW;
-    if(tileW < 8) return;
-    let ox = scrollX % tileW;
-    if(ox < 0) ox += tileW;
-    for(let x = -ox; x < W; x += tileW){
-      ctx.drawImage(img, x + dx, dy, tileW, destH);
-    }
-  }
-
   function drawBackground(now, dt){
     const groundY = H * 0.82;
-    const scrollSpeed = (state==='playing' ? 0.12 + approachSpeedSafe()*0.012 : 0.045);
-    bgScroll += dt * scrollSpeed;
-    bgOffset = bgScroll;
 
     if(sprOk('bgPlay')){
-      const img = SPR.bgPlay;
-      const destH = groundY;
-      const destW = Math.max(W, Math.round(img.naturalWidth * (destH / img.naturalHeight)));
-      drawTiledX(img, 0, 0, destW, destH, bgScroll * 0.45);
+      ctx.drawImage(SPR.bgPlay, 0, 0, W, groundY);
     } else {
       ctx.drawImage(paint.sky.c, 0, 0, paint.sky.w, paint.sky.h);
-      ctx.save();
-      const pillarScroll = bgScroll % 90;
-      for(let x = -pillarScroll; x < W+90; x += 90){
+      for(let x = 0; x < W+90; x += 90){
         ctx.drawImage(paint.pillar.c, x, H*0.12, paint.pillar.w, paint.pillar.h);
         ctx.fillStyle = 'rgba(15,22,17,0.7)';
         ctx.fillRect(x-20, H*0.30, 54, 6);
       }
-      ctx.restore();
     }
 
-    // atmospheric dust motes
     dust.forEach(d=>{
-      d.x -= d.s * dt * 0.06 * (0.6+approachSpeedSafe()*0.02);
-      if(d.x < -5){ d.x = W+5; d.y = Math.random()*groundY; }
       ctx.fillStyle = `rgba(200,220,190,${d.a})`;
       ctx.beginPath(); ctx.arc(d.x, d.y, d.r, 0, Math.PI*2); ctx.fill();
     });
 
-    // rail bed
     ctx.fillStyle = sprOk('bgPlay') ? '#12141c' : '#10160f';
     ctx.fillRect(0, groundY, W, H-groundY);
 
-    // sleepers with shading
-    let sOffset = (bgScroll * 1.15) % 44;
-    for(let x = -sOffset; x < W+44; x += 44){
+    for(let x = 0; x < W+44; x += 44){
       ctx.drawImage(paint.sleeper.c, x, groundY+12, paint.sleeper.w, paint.sleeper.h);
     }
 
