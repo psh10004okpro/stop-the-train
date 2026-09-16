@@ -5,29 +5,30 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>STOP THE TRAIN</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=DotGothic16&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=Noto+Sans+KR:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
   :root{
-    --bg-deep: #05080a;
-    --bg-mid: #0d1512;
-    --steel: #8a9490;
-    --steel-dark: #2b322f;
-    --rust: #b0451d;
-    --flame: #ffb347;
-    --flame-hot: #fff2c2;
-    --signal-red: #e0402c;
-    --hud-line: #3a4640;
-    --panel: #1a2320;
+    --bg-deep: #07080f;
+    --bg-mid: #10131c;
+    --steel: #9aa4b8;
+    --steel-dark: #1b2030;
+    --rust: #c9a45c;
+    --flame: #e8c37a;
+    --flame-hot: #f6ead0;
+    --signal-red: #e35d6a;
+    --hud-line: rgba(201,164,92,0.35);
+    --panel: rgba(12,14,24,0.78);
   }
   *{box-sizing:border-box; -webkit-tap-highlight-color: transparent;}
   html,body{
     margin:0; padding:0; height:100%; overflow:hidden;
-    background: #000;
-    font-family: 'DotGothic16', monospace;
-    color:#e8ecdf;
+    background: #05060c;
+    font-family: 'Noto Sans KR', sans-serif;
+    color:#e8ecf4;
     user-select:none;
   }
-  .pixel{ font-family:'Press Start 2P', monospace; }
+  .pixel{ font-family:'Noto Sans KR', sans-serif; font-weight:700; letter-spacing:0.04em; }
+  .display-en{ font-family:'Cinzel', serif; letter-spacing:0.12em; }
 
   #stage{
     position:relative;
@@ -42,7 +43,7 @@
     body{ display:flex; align-items:center; justify-content:center; }
   }
 
-  canvas{ display:block; width:100%; height:100%; image-rendering: pixelated; image-rendering: crisp-edges; }
+  canvas{ display:block; width:100%; height:100%; }
 
   /* HUD */
   #hud{
@@ -53,29 +54,29 @@
     z-index:5;
   }
   .hud-block{
-    background: linear-gradient(180deg, #2a2218, #14110c);
-    border: 2px solid #5a4030;
-    border-top: 2px solid #c25a2a;
-    box-shadow: 0 3px 0 #1a1008, 0 6px 12px rgba(0,0,0,0.55), inset 0 0 0 1px rgba(255,180,80,0.12);
-    padding: 8px 11px;
-    font-size: 10px;
-    line-height: 1.8;
-    border-radius: 0;
+    background: var(--panel);
+    backdrop-filter: blur(14px);
+    border: 1px solid var(--hud-line);
+    box-shadow: 0 10px 28px rgba(0,0,0,0.35);
+    padding: 10px 14px;
+    font-size: 12px;
+    line-height: 1.7;
+    border-radius: 12px;
   }
-  #stageLabel{ color: var(--flame); text-shadow: 1px 1px 0 #000; }
+  #stageLabel{ color: var(--flame); font-weight:700; letter-spacing:0.14em; }
   #hpWrap{
-    width:150px; height:13px;
-    background:#0c100e;
-    border:2px solid #000;
-    box-shadow: inset 0 0 0 1px #3a4640;
-    margin-top:5px;
+    width:160px; height:8px;
+    background:rgba(0,0,0,0.45);
+    border:1px solid rgba(255,255,255,0.12);
+    margin-top:8px;
     position:relative;
-    border-radius:1px;
+    border-radius:99px;
+    overflow:hidden;
   }
   #hpFill{
-    position:absolute; top:1px; left:1px; bottom:1px;
+    position:absolute; top:0; left:0; bottom:0;
     width:100%;
-    background: linear-gradient(180deg, #ff8a4a, #d13a12 60%, #921f08);
+    background: linear-gradient(90deg, #c9a45c, #e35d6a);
     transition: width 0.12s ease-out;
   }
   #hpFill::after{
@@ -83,19 +84,20 @@
     background: linear-gradient(180deg, rgba(255,255,255,0.35), rgba(255,255,255,0));
   }
   #distWrap{
-    width:150px; height:7px;
-    background:#0c100e;
-    border:2px solid #000;
-    box-shadow: inset 0 0 0 1px #3a4640;
-    margin-top:5px;
+    width:160px; height:5px;
+    background:rgba(0,0,0,0.45);
+    border:1px solid rgba(255,255,255,0.12);
+    margin-top:6px;
     position:relative;
+    border-radius:99px;
+    overflow:hidden;
   }
   #distFill{
-    position:absolute; top:1px; right:1px; bottom:1px;
-    background: #e0402c;
+    position:absolute; top:0; right:0; bottom:0;
+    background: #7f8cff;
   }
   #comboWrap{ text-align:right; }
-  #comboVal{ color: var(--flame-hot); font-size:16px; text-shadow: 1px 1px 0 #000;}
+  #comboVal{ color: var(--flame-hot); font-size:22px; font-weight:700;}
 
   #hint{
     position:absolute; bottom:14px; left:0; right:0;
@@ -119,51 +121,39 @@
     text-align:center;
     padding: 20px;
   }
-  .overlay::before{
-    content:'';
-    position:absolute; left:0; right:0; top:0; height:10px;
-    background: repeating-linear-gradient(-45deg, #c25a2a 0 8px, #1a1208 8px 16px);
-    pointer-events:none;
-  }
-  .temp-badge{
-    font-family:'Press Start 2P', monospace;
-    font-size:7px;
-    letter-spacing:1px;
-    color:#ffb347;
-    background: rgba(0,0,0,0.55);
-    border: 1px solid #c25a2a;
-    padding: 6px 10px;
-    margin-bottom: 14px;
-  }
+  .overlay::before{ display:none; }
+  .temp-badge{ display:none; }
   .overlay > *{ position:relative; z-index:1; }
   .overlay h1, .overlay .sub, .overlay .shop-list, .overlay .shop-footer{
     text-shadow: 0 2px 0 #000, 0 0 12px #000;
   }
   .hidden{ display:none !important; }
   .overlay h1{
-    font-size: 22px;
-    color: var(--flame);
-    margin: 0 0 18px 0;
-    text-shadow: 3px 3px 0 #000;
+    font-size: 28px;
+    color: var(--flame-hot);
+    margin: 0 0 16px 0;
+    font-weight:700;
   }
   .overlay .sub{
-    font-size: 11px;
-    line-height:2.2;
-    color:#cfd8cc;
+    font-size: 14px;
+    line-height:1.9;
+    color:#c5cbe0;
     margin-bottom: 22px;
   }
-  .overlay .sub b{ color: var(--flame-hot); }
+  .overlay .sub b{ color: var(--flame); }
   button.arcade{
-    font-family:'Press Start 2P', monospace;
-    font-size: 12px;
-    padding: 14px 22px;
-    background: linear-gradient(180deg, #c25a2a, #922f0f);
-    color:#fff2dd;
-    border: 3px solid #2a1608;
-    box-shadow: 0 5px 0 #2a1608, 0 8px 14px rgba(0,0,0,0.5);
+    font-family:'Noto Sans KR', sans-serif;
+    font-size: 15px;
+    font-weight:700;
+    padding: 13px 22px;
+    background: linear-gradient(180deg, rgba(42,48,72,0.95), rgba(16,18,28,0.95));
+    color:#f6ead0;
+    border: 1px solid #c9a45c;
+    border-radius: 10px;
+    box-shadow: 0 10px 24px rgba(0,0,0,0.4);
     cursor:pointer;
   }
-  button.arcade:active{ transform: translateY(4px); box-shadow: 0 1px 0 #2a1608; }
+  button.arcade:active{ transform: translateY(1px); filter:brightness(0.92); }
 
   #stageClear{
     position:absolute; inset:0;
@@ -192,12 +182,11 @@
   .shop-list{ width:100%; max-width:340px; margin-bottom:12px; }
   .shop-item{
     display:flex; align-items:center; justify-content:space-between; gap:12px;
-    background: linear-gradient(180deg, #2a2218, #14110c);
-    border:2px solid #5a4030;
-    border-left: 4px solid #c25a2a;
-    padding:10px 12px;
+    background: rgba(12,14,24,0.78);
+    border:1px solid rgba(201,164,92,0.28);
+    padding:12px 14px;
     margin-bottom:8px;
-    border-radius:0;
+    border-radius:10px;
     text-align:left;
   }
   .shop-item-name{ font-size:11px; color:var(--flame-hot); margin-bottom:7px; }
@@ -215,9 +204,9 @@
   #testSkipBtn{
     position:absolute; right:12px; bottom:12px;
     margin:0;
-    font-size: 6px;
-    line-height: 1.5;
-    padding: 8px 10px;
+    font-size: 11px;
+    line-height: 1.4;
+    padding: 8px 12px;
     background: linear-gradient(180deg, #3d6a52, #1e3d2c);
     border-color: #0e1a12;
     box-shadow: 0 3px 0 #0e1a12;
@@ -242,36 +231,46 @@
       linear-gradient(180deg, rgba(6,8,10,0.62) 0%, rgba(6,8,10,0.88) 100%),
       url('train_stopper_assets/shop_bg.jpg') center / cover no-repeat;
   }
-  .title-lockup{ display:flex; flex-direction:column; align-items:center; gap:14px; margin-bottom:8px; }
-  .title-tag{ font-size:10px; color:#cfd8cc; letter-spacing:1px; margin-top:-4px; text-shadow:0 2px 0 #000; }
-  .title-logo{ width:86px; height:86px; object-fit:cover; border:3px solid #2a1608; box-shadow:0 5px 0 #1a0e08; image-rendering:pixelated; }
+  .title-lockup{ display:flex; flex-direction:column; align-items:center; gap:12px; margin-bottom:8px; }
+  .title-tag{ font-size:13px; color:#c5cbe0; letter-spacing:0.08em; margin-top:-2px; }
+  .title-logo{
+    width:92px; height:92px; object-fit:cover; object-position:center 12%;
+    border:1px solid rgba(201,164,92,0.5);
+    border-radius:50%;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.45);
+    background: rgba(10,12,20,0.6);
+  }
   .menu-col{ display:flex; flex-direction:column; gap:10px; width:min(280px, 86vw); }
   .menu-col button.arcade{ width:100%; }
   button.arcade-ghost{
-    background: linear-gradient(180deg, #3a4640, #1c2420);
-    border-color:#0e1412;
-    box-shadow: 0 5px 0 #0e1412, 0 8px 14px rgba(0,0,0,0.5);
-    font-size:10px;
+    background: rgba(16,18,28,0.8);
+    border-color: rgba(201,164,92,0.28);
+    color:#d7dcec;
+    font-size:14px;
+    font-weight:600;
   }
   #splashLogo{
-    width:120px; height:120px; object-fit:cover;
-    border:4px solid #2a1608; box-shadow:0 8px 0 #1a0e08, 0 0 40px rgba(255,180,60,0.25);
-    image-rendering:pixelated;
+    width:120px; height:120px; object-fit:cover; object-position:center 12%;
+    border:1px solid rgba(201,164,92,0.55);
+    border-radius:50%;
+    box-shadow: 0 0 40px rgba(201,164,92,0.2);
+    background: rgba(10,12,20,0.55);
   }
   .intro-caption{
-    font-size:14px; color:var(--flame-hot); text-shadow:3px 3px 0 #000;
-    margin-top:auto;
+    font-size:20px; color: var(--flame-hot); font-weight:700;
+    margin-top:auto; line-height:1.6;
   }
-  .skip-hint{ font-size:10px; color:#9fae9f; margin-top:16px; letter-spacing:1px; }
+  .skip-hint{ font-size:12px; color:#9aa3bb; margin-top:16px; letter-spacing:0.08em; }
   .banner-text{
-    font-size:22px; color:var(--flame-hot); text-shadow:3px 3px 0 #000;
+    font-size:28px; color: var(--flame-hot); font-weight:700; letter-spacing:0.16em;
   }
-  .banner-text.sting{ color:#ff8a4a; font-size:16px; }
+  .banner-text.sting{ color:#e8c37a; font-size:22px; letter-spacing:0.12em; }
   .settle-card{
-    background: linear-gradient(180deg, #2a2218, #14110c);
-    border:3px solid #c25a2a;
-    box-shadow: 0 8px 0 #1a0e08;
-    padding:22px 26px 18px;
+    background: rgba(12,14,24,0.88);
+    border:1px solid rgba(201,164,92,0.4);
+    border-radius:16px;
+    box-shadow: 0 18px 40px rgba(0,0,0,0.45);
+    padding:26px 28px 20px;
     min-width: min(320px, 86vw);
   }
   .toggle-row{
@@ -307,13 +306,13 @@
   <div id="hint" class="hidden pixel">등굣길을 열어라. SPACE 연타 (또는 탭)</div>
 
   <div class="overlay splash" id="splashOverlay">
-    <img id="splashLogo" src="train_stopper_assets/logo.jpg" alt="">
+    <img id="splashLogo" src="train_stopper_assets/hero_front.png" alt="">
   </div>
 
   <div class="overlay hidden" id="startOverlay">
     <div class="title-lockup">
-      <img class="title-logo" src="train_stopper_assets/logo.jpg" alt="">
-      <h1 class="pixel">STOP THE TRAIN</h1>
+      <img class="title-logo" src="train_stopper_assets/hero_front.png" alt="">
+      <h1 class="display-en">STOP THE TRAIN</h1>
       <div class="title-tag">등굣길과 출근길이 선로가 된 도시</div>
     </div>
     <div class="menu-col">
@@ -325,21 +324,21 @@
   </div>
 
   <div class="overlay intro hidden" id="introOverlay">
-    <div class="intro-caption pixel">통학도, 출근도<br>선로 너머에 있다</div>
+    <div class="intro-caption">통학도, 출근도<br>선로 너머에 있다</div>
     <div class="skip-hint">탭하여 스킵</div>
   </div>
 
   <div class="overlay dim hidden" id="bannerOverlay">
-    <div class="banner-text pixel" id="bannerText">STAGE 01</div>
+    <div class="banner-text display-en" id="bannerText">STAGE 01</div>
   </div>
 
   <div class="overlay dim hidden" id="stingOverlay">
-    <div class="banner-text pixel sting">다음 열차 접근</div>
+    <div class="banner-text sting">다음 열차 접근</div>
   </div>
 
   <div class="overlay dim hidden" id="settleOverlay">
     <div class="settle-card">
-      <h1 class="pixel" id="settleTitle">STAGE 01 CLEAR</h1>
+      <h1 class="display-en" id="settleTitle">STAGE 01 CLEAR</h1>
       <div class="sub">
         획득 골드: <b id="settleGold">0</b>G<br>
         이번 연타: <b id="settleMash">0</b> 타/초<br>
@@ -350,7 +349,7 @@
   </div>
 
   <div class="overlay hidden" id="overOverlay">
-    <h1 class="pixel" style="color:var(--signal-red);">TRAIN BREACH</h1>
+    <h1 class="display-en" style="color:var(--signal-red);">TRAIN BREACH</h1>
     <div class="sub">
       도달 스테이지: <b id="finalStage">1</b><br>
       최고 연타속도: <b id="finalCombo">0</b> 타/초<br>
@@ -364,7 +363,7 @@
   </div>
 
   <div class="overlay hidden" id="recordsOverlay">
-    <h1 class="pixel">최고 기록</h1>
+    <h1>최고 기록</h1>
     <div class="sub">
       최고 스테이지: <b id="recordStage">1</b><br>
       최고 연타: <b id="recordMash">0</b> 타/초
@@ -373,14 +372,14 @@
   </div>
 
   <div class="overlay hidden" id="settingsOverlay">
-    <h1 class="pixel">설정</h1>
+    <h1>설정</h1>
     <button class="arcade arcade-ghost" id="muteBtn" style="margin-bottom:10px;">음소거: OFF</button>
     <button class="arcade arcade-ghost" id="shakeBtn" style="margin-bottom:16px;">화면 흔들림: ON</button>
     <button class="arcade" id="settingsCloseBtn">닫기</button>
   </div>
 
   <div class="overlay hidden" id="shopOverlay">
-    <h1 class="pixel">선로변 무기고</h1>
+    <h1>선로변 무기고</h1>
     <div class="sub" id="shopGoldLine">보유 골드: <b id="shopGold">0</b>G</div>
     <div class="shop-list">
       <div class="shop-item">
@@ -2060,7 +2059,7 @@
       ctx.fillStyle = 'rgba(0,0,0,0.45)';
       ctx.beginPath(); ctx.ellipse(px+10, groundY+3, 30, 7, 0, 0, Math.PI*2); ctx.fill();
       ctx.translate(kick, 0);
-      drawSprite(SPR.player, px + 16, groundY + 2, 100, 0.42);
+      drawSprite(SPR.player, px + 28, groundY + 2, 128, 0.36);
       if(flashT > 0){
         const m = getPlayerMuzzle(px, groundY);
         const r = (hasSniper ? 22 : 16) * flashT + 5;
