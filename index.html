@@ -243,6 +243,7 @@
       url('train_stopper_assets/shop_bg.jpg') center / cover no-repeat;
   }
   .title-lockup{ display:flex; flex-direction:column; align-items:center; gap:14px; margin-bottom:8px; }
+  .title-tag{ font-size:10px; color:#cfd8cc; letter-spacing:1px; margin-top:-4px; text-shadow:0 2px 0 #000; }
   .title-logo{ width:86px; height:86px; object-fit:cover; border:3px solid #2a1608; box-shadow:0 5px 0 #1a0e08; image-rendering:pixelated; }
   .menu-col{ display:flex; flex-direction:column; gap:10px; width:min(280px, 86vw); }
   .menu-col button.arcade{ width:100%; }
@@ -303,7 +304,7 @@
 
   <div id="stageClear"><span class="pixel" id="stageClearText">STAGE CLEAR!</span></div>
 
-  <div id="hint" class="hidden pixel">SPACE 연타 (또는 화면 탭) 로 열차를 밀어내라!</div>
+  <div id="hint" class="hidden pixel">등굣길을 열어라. SPACE 연타 (또는 탭)</div>
 
   <div class="overlay splash" id="splashOverlay">
     <img id="splashLogo" src="train_stopper_assets/logo.jpg" alt="">
@@ -313,6 +314,7 @@
     <div class="title-lockup">
       <img class="title-logo" src="train_stopper_assets/logo.jpg" alt="">
       <h1 class="pixel">STOP THE TRAIN</h1>
+      <div class="title-tag">등굣길과 출근길이 선로가 된 도시</div>
     </div>
     <div class="menu-col">
       <button class="arcade" id="startBtn">게임 시작</button>
@@ -323,7 +325,7 @@
   </div>
 
   <div class="overlay intro hidden" id="introOverlay">
-    <div class="intro-caption pixel">SPACE를 연타하라</div>
+    <div class="intro-caption pixel">통학도, 출근도<br>선로 너머에 있다</div>
     <div class="skip-hint">탭하여 스킵</div>
   </div>
 
@@ -383,8 +385,8 @@
     <div class="shop-list">
       <div class="shop-item">
         <div class="shop-item-info">
-          <div class="shop-item-name pixel" id="companionItemName">동료</div>
-          <div class="shop-item-desc" id="companionItemDesc">주인공 옆에서 0.5초마다 자동으로 한 발씩 사격</div>
+          <div class="shop-item-name pixel" id="companionItemName">직장인</div>
+          <div class="shop-item-desc" id="companionItemDesc">출근길이 막힌 직장인. 옆에서 0.5초마다 자동 사격</div>
         </div>
         <button class="arcade shop-buy" id="buyCompanionBtn">60G</button>
       </div>
@@ -1300,8 +1302,8 @@
         buyCompanionBtn.textContent = COMPANION_COST + 'G 구매';
         buyCompanionBtn.disabled = gold < COMPANION_COST;
       } else {
-        companionItemName.textContent = '동료';
-        companionItemDesc.textContent = '주인공 옆에서 0.5초마다 자동으로 한 발씩 사격';
+        companionItemName.textContent = '직장인';
+        companionItemDesc.textContent = '출근길이 막힌 직장인. 옆에서 0.5초마다 자동 사격';
         buyCompanionBtn.textContent = COMPANION_COST + 'G 구매';
         buyCompanionBtn.disabled = gold < COMPANION_COST;
       }
