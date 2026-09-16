@@ -2076,7 +2076,7 @@
       ctx.fillStyle = 'rgba(0,0,0,0.45)';
       ctx.beginPath(); ctx.ellipse(px+10, groundY+3, 30, 7, 0, 0, Math.PI*2); ctx.fill();
       ctx.translate(kick, 0);
-      drawSprite(SPR.player, px + 28, groundY + 2, 128, 0.36);
+      drawSprite(SPR.player, px + 6, groundY + 2, 132, 0.5);
       if(flashT > 0){
         const m = getPlayerMuzzle(px, groundY);
         const r = (hasSniper ? 22 : 16) * flashT + 5;
