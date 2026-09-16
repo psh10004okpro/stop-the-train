@@ -660,12 +660,21 @@
     const img = SPR[name];
     return !!(img && img.complete && img.naturalWidth > 1);
   }
+  function sprOkFrame(img){
+    return !!(img && img.complete && img.naturalWidth > 1);
+  }
   function loadTempArt(){
     ['player','train','zombie','companion','civilian','shieldman'].forEach(n=>{
       const img = new Image();
       img.src = ASSET_DIR + n + '.png';
       SPR[n] = img;
     });
+    SPR.playerAtk = [];
+    for(let i=0;i<4;i++){
+      const img = new Image();
+      img.src = ASSET_DIR + 'player_atk_' + i + '.png';
+      SPR.playerAtk[i] = img;
+    }
     const bg = new Image();
     bg.src = ASSET_DIR + 'bg_loop.jpg';
     SPR.bgPlay = bg;
@@ -1593,6 +1602,10 @@
   }
 
   const PLAYER_SPR = { destH: 138, ax: 0.40, mNx: 0.985, mNy: 0.175 };
+  const ATK_FPS = 16;
+  const ATK_LEN = 4;
+  let atkFrame = -1;
+  let atkAcc = 0;
   function getPlayerMuzzle(px, groundY){
     if(hasTurret && !hasSniper){
       const gx = px + TURRET_OFFSET_X, gy = groundY - 34;
@@ -1794,6 +1807,8 @@
     }
     hitFlash = 1;
     recoil = 1;
+    atkFrame = 0;
+    atkAcc = 0;
     spawnBullet(m.x, m.y, hasSniper ? 'tank' : undefined);
     currentAmmo -= 1;
     applyDamageIfVisible(stats.dmgMult, stats.knockMult, stats.flatDamage);
@@ -2084,7 +2099,9 @@
       ctx.fillStyle = 'rgba(0,0,0,0.45)';
       ctx.beginPath(); ctx.ellipse(px+10, groundY+3, 30, 7, 0, 0, Math.PI*2); ctx.fill();
       ctx.translate(kick, 0);
-      drawSprite(SPR.player, px + 8, groundY + 2, PLAYER_SPR.destH, PLAYER_SPR.ax);
+      let pose = SPR.player;
+      if(atkFrame >= 0 && SPR.playerAtk && sprOkFrame(SPR.playerAtk[atkFrame])) pose = SPR.playerAtk[atkFrame];
+      drawSprite(pose, px + 8, groundY + 2, PLAYER_SPR.destH, PLAYER_SPR.ax);
       if(flashT > 0){
         const m = getPlayerMuzzle(px, groundY);
         const r = (hasSniper ? 22 : 16) * flashT + 5;
@@ -4041,6 +4058,15 @@
 
     if(hitFlash > 0) hitFlash -= dt*0.006;
     if(recoil > 0) recoil -= dt*0.01;
+    if(atkFrame >= 0){
+      atkAcc += dt;
+      const step = 1000 / ATK_FPS;
+      while(atkFrame >= 0 && atkAcc >= step){
+        atkAcc -= step;
+        atkFrame += 1;
+        if(atkFrame >= ATK_LEN) atkFrame = -1;
+      }
+    }
     if(companionFlash > 0) companionFlash -= dt*0.006;
     if(droneFlash > 0) droneFlash -= dt*0.006;
     if(turretFlash > 0) turretFlash -= dt*0.006;
