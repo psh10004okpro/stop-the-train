@@ -48,27 +48,25 @@
   /* HUD */
   #hud{
     position:absolute; top:0; left:0; right:0;
-    padding: 10px 12px;
+    padding: 12px 14px;
     display:flex; justify-content:space-between; align-items:flex-start;
     pointer-events:none;
     z-index:5;
   }
   .hud-block{
-    background:
-      linear-gradient(180deg, rgba(10,12,22,0.2), rgba(10,12,22,0.35)),
-      url('train_stopper_assets/ui_panel.png') center / 100% 100% no-repeat;
+    background: url('train_stopper_assets/ui_hud_left.png') center / 100% 100% no-repeat;
     border: none;
-    box-shadow: 0 10px 28px rgba(0,0,0,0.35);
-    padding: 14px 18px;
+    box-shadow: none;
+    padding: 16px 20px 14px;
     font-size: 12px;
-    line-height: 1.7;
-    border-radius: 4px;
+    line-height: 1.55;
+    min-width: 188px;
   }
   #stageLabel{ color: var(--flame); font-weight:700; letter-spacing:0.14em; }
   #hpWrap{
-    width:160px; height:8px;
+    width:148px; height:8px;
     background:rgba(0,0,0,0.45);
-    border:1px solid rgba(255,255,255,0.12);
+    border:1px solid rgba(201,164,92,0.35);
     margin-top:8px;
     position:relative;
     border-radius:99px;
@@ -85,9 +83,9 @@
     background: linear-gradient(180deg, rgba(255,255,255,0.35), rgba(255,255,255,0));
   }
   #distWrap{
-    width:160px; height:5px;
+    width:148px; height:5px;
     background:rgba(0,0,0,0.45);
-    border:1px solid rgba(255,255,255,0.12);
+    border:1px solid rgba(201,164,92,0.28);
     margin-top:6px;
     position:relative;
     border-radius:99px;
@@ -97,18 +95,26 @@
     position:absolute; top:0; right:0; bottom:0;
     background: #7f8cff;
   }
-  #comboWrap{ text-align:right; }
+  #comboWrap{
+    text-align:center;
+    background: url('train_stopper_assets/ui_hud_combo.png') center / contain no-repeat;
+    width: 108px; height: 108px;
+    padding: 28px 8px 0;
+    min-width: 0;
+  }
   #comboVal{ color: var(--flame-hot); font-size:22px; font-weight:700;}
 
   #hint{
-    position:absolute; bottom:14px; left:0; right:0;
+    position:absolute; bottom:10px; left:8%; right:8%;
     text-align:center;
-    font-size:10px;
-    color:#9fae9f;
+    font-size:12px;
+    color:#f6ead0;
     z-index:5;
-    letter-spacing:1px;
+    letter-spacing:0.08em;
     pointer-events:none;
-    text-shadow: 1px 1px 2px #000;
+    text-shadow: 0 1px 6px #000;
+    background: url('train_stopper_assets/ui_hint_bar.png') center / 100% 100% no-repeat;
+    padding: 12px 20px;
   }
 
 
@@ -116,7 +122,7 @@
     position:absolute; inset:0;
     display:flex; flex-direction:column; align-items:center; justify-content:center;
     background:
-      linear-gradient(180deg, rgba(6,8,10,0.55) 0%, rgba(6,8,10,0.82) 55%, rgba(6,8,10,0.92) 100%),
+      linear-gradient(180deg, rgba(8,10,18,0.18) 0%, rgba(8,10,18,0.42) 100%),
       url('train_stopper_assets/title.png') center / cover no-repeat;
     z-index:20;
     text-align:center;
@@ -146,16 +152,16 @@
     font-family:'Noto Sans KR', sans-serif;
     font-size: 15px;
     font-weight:700;
-    padding: 16px 24px;
-    background: url('train_stopper_assets/ui_button.png') center / 100% 100% no-repeat;
+    padding: 18px 24px;
+    background: url('train_stopper_assets/ui_menu_btn.png') center / 100% 100% no-repeat;
     color:#f6ead0;
     border: none;
-    border-radius: 12px;
-    box-shadow: 0 10px 24px rgba(0,0,0,0.4);
+    border-radius: 6px;
+    box-shadow: none;
     cursor:pointer;
     text-shadow: 0 1px 8px #000;
   }
-  button.arcade:hover{ background-image: url('train_stopper_assets/ui_button_hover.png'); }
+  button.arcade:hover{ filter: brightness(1.12); }
   button.arcade:active{ transform: translateY(1px); filter:brightness(0.92); }
 
   #stageClear{
@@ -182,22 +188,27 @@
   }
 
   /* shop */
-  .shop-list{ width:100%; max-width:340px; margin-bottom:12px; }
-  .shop-item{
-    display:flex; align-items:center; justify-content:space-between; gap:12px;
-    background:
-      linear-gradient(180deg, rgba(10,12,22,0.25), rgba(10,12,22,0.4)),
-      url('train_stopper_assets/ui_panel.png') center / 100% 100% no-repeat;
-    border: none;
-    padding:14px 16px;
-    margin-bottom:8px;
-    border-radius:4px;
-    text-align:left;
+  .shop-list{
+    width:100%; max-width:640px; margin-bottom:12px;
+    display:grid; grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap:10px;
   }
-  .shop-item-name{ font-size:11px; color:var(--flame-hot); margin-bottom:7px; }
-  .shop-item-desc{ font-size:10px; color:#b9c4b6; line-height:1.6; max-width: 190px; }
+  @media (max-width: 640px){
+    .shop-list{ grid-template-columns: 1fr; max-width: 340px; }
+  }
+  .shop-item{
+    display:flex; flex-direction:column; align-items:center; justify-content:space-between;
+    gap:10px;
+    background: url('train_stopper_assets/ui_shop_card.png') center / 100% 100% no-repeat;
+    border: none;
+    padding:22px 14px 16px;
+    min-height: 210px;
+    text-align:center;
+  }
+  .shop-item-name{ font-size:12px; color:var(--flame-hot); margin-bottom:8px; }
+  .shop-item-desc{ font-size:11px; color:#d5dbe8; line-height:1.55; max-width: none; }
   button.shop-buy{
-    font-size:10px; padding:10px 12px; white-space:nowrap; flex-shrink:0;
+    font-size:12px; padding:10px 14px; white-space:nowrap; width: 100%;
   }
   button.shop-buy:disabled{
     opacity:0.4; cursor:not-allowed; box-shadow:none; transform:none;
@@ -236,23 +247,38 @@
       linear-gradient(180deg, rgba(6,8,10,0.62) 0%, rgba(6,8,10,0.88) 100%),
       url('train_stopper_assets/shop_bg.jpg') center / cover no-repeat;
   }
-  .title-lockup{ display:flex; flex-direction:column; align-items:center; gap:12px; margin-bottom:8px; }
-  .title-tag{ font-size:13px; color:#c5cbe0; letter-spacing:0.08em; margin-top:-2px; }
-  .title-logo{
-    width:92px; height:92px; object-fit:cover; object-position:center 12%;
-    border:1px solid rgba(201,164,92,0.5);
-    border-radius:50%;
-    box-shadow: 0 8px 24px rgba(0,0,0,0.45);
-    background: rgba(10,12,20,0.6);
+  .title-lockup{ display:flex; flex-direction:column; align-items:center; gap:10px; margin-bottom:18px; }
+  .title-plate{
+    width: min(560px, 92vw);
+    background: url('train_stopper_assets/ui_title_plate.png') center / 100% 100% no-repeat;
+    padding: 22px 36px 18px;
   }
-  .menu-col{ display:flex; flex-direction:column; gap:10px; width:min(280px, 86vw); }
+  .title-plate h1{ margin:0 0 6px; font-size:22px; }
+  .title-tag{ font-size:12px; color:#c5cbe0; letter-spacing:0.08em; }
+  .menu-col{ display:flex; flex-direction:column; gap:12px; width:min(340px, 78vw); }
   .menu-col button.arcade{ width:100%; }
   button.arcade-ghost{
-    background: rgba(16,18,28,0.8);
-    border-color: rgba(201,164,92,0.28);
-    color:#d7dcec;
+    background-image: url('train_stopper_assets/ui_menu_btn.png');
+    color:#e8eef8;
     font-size:14px;
     font-weight:600;
+  }
+  .over-card, .records-card, .settings-card{
+    width: min(520px, 92vw);
+    background: url('train_stopper_assets/ui_over_panel.png') center / 100% 100% no-repeat;
+    padding: 36px 40px 28px;
+    margin-bottom: 14px;
+  }
+  .over-card h1, .records-card h1, .settings-card h1{ margin-bottom: 10px; }
+  #shopContinueBtn{
+    width: min(420px, 86vw);
+    background-image: url('train_stopper_assets/ui_shop_confirm.png');
+    padding: 20px 24px;
+  }
+  #shopGoldLine{
+    background: url('train_stopper_assets/ui_gold_plate.png') center / 100% 100% no-repeat;
+    padding: 12px 22px;
+    min-width: 180px;
   }
   #splashLogo{
     width:120px; height:120px; object-fit:cover; object-position:center 12%;
@@ -271,13 +297,10 @@
   }
   .banner-text.sting{ color:#e8c37a; font-size:22px; letter-spacing:0.12em; }
   .settle-card{
-    background:
-      linear-gradient(180deg, rgba(10,12,22,0.15), rgba(10,12,22,0.35)),
-      url('train_stopper_assets/ui_panel.png') center / 100% 100% no-repeat;
+    width: min(520px, 92vw);
+    background: url('train_stopper_assets/ui_over_panel.png') center / 100% 100% no-repeat;
     border: none;
-    border-radius: 8px;
-    box-shadow: 0 18px 40px rgba(0,0,0,0.45);
-    padding:32px 34px 24px;
+    padding: 36px 40px 28px;
     min-width: min(320px, 86vw);
   }
   .toggle-row{
@@ -303,7 +326,7 @@
       <div id="ammoLine" class="pixel" style="margin-top:4px; color:#cfe0ff;">AMMO 12/12</div>
     </div>
     <div class="hud-block pixel" id="comboWrap">
-      <div style="color:#9fae9f;">MASH/S</div>
+      <div style="color:#c5cbe0; font-size:10px; letter-spacing:0.12em;">MASH</div>
       <div id="comboVal">0</div>
     </div>
   </div>
@@ -318,9 +341,10 @@
 
   <div class="overlay hidden" id="startOverlay">
     <div class="title-lockup">
-      <img class="title-logo" src="train_stopper_assets/hero_front.png" alt="">
-      <h1 class="display-en">STOP THE TRAIN</h1>
-      <div class="title-tag">등굣길과 출근길이 선로가 된 도시</div>
+      <div class="title-plate">
+        <h1 class="display-en">STOP THE TRAIN</h1>
+        <div class="title-tag">등굣길과 출근길이 선로가 된 도시</div>
+      </div>
     </div>
     <div class="menu-col">
       <button class="arcade" id="startBtn">게임 시작</button>
@@ -356,30 +380,36 @@
   </div>
 
   <div class="overlay hidden" id="overOverlay">
-    <h1 class="display-en" style="color:var(--signal-red);">TRAIN BREACH</h1>
-    <div class="sub">
-      도달 스테이지: <b id="finalStage">1</b><br>
-      최고 연타속도: <b id="finalCombo">0</b> 타/초<br>
-      누적 골드: <b id="finalGold">0</b>G<br>
-      파괴한 열차: <b id="finalTrains">0</b>
+    <div class="over-card">
+      <h1 class="display-en" style="color:var(--signal-red);">TRAIN BREACH</h1>
+      <div class="sub">
+        도달 스테이지: <b id="finalStage">1</b><br>
+        최고 연타속도: <b id="finalCombo">0</b> 타/초<br>
+        누적 골드: <b id="finalGold">0</b>G<br>
+        파괴한 열차: <b id="finalTrains">0</b>
+      </div>
     </div>
-    <div class="menu-col" style="margin-top:8px;">
+    <div class="menu-col">
       <button class="arcade" id="retryBtn">다시 막기</button>
       <button class="arcade arcade-ghost" id="overTitleBtn">타이틀</button>
     </div>
   </div>
 
   <div class="overlay hidden" id="recordsOverlay">
-    <h1>최고 기록</h1>
-    <div class="sub">
-      최고 스테이지: <b id="recordStage">1</b><br>
-      최고 연타: <b id="recordMash">0</b> 타/초
+    <div class="records-card">
+      <h1>최고 기록</h1>
+      <div class="sub">
+        최고 스테이지: <b id="recordStage">1</b><br>
+        최고 연타: <b id="recordMash">0</b> 타/초
+      </div>
     </div>
     <button class="arcade arcade-ghost" id="recordsCloseBtn">닫기</button>
   </div>
 
   <div class="overlay hidden" id="settingsOverlay">
-    <h1>설정</h1>
+    <div class="settings-card">
+      <h1>설정</h1>
+    </div>
     <button class="arcade arcade-ghost" id="muteBtn" style="margin-bottom:10px;">음소거: OFF</button>
     <button class="arcade arcade-ghost" id="shakeBtn" style="margin-bottom:16px;">화면 흔들림: ON</button>
     <button class="arcade" id="settingsCloseBtn">닫기</button>
