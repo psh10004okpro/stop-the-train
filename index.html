@@ -333,7 +333,7 @@
 
   <div id="stageClear"><span class="pixel" id="stageClearText">STAGE CLEAR!</span></div>
 
-  <div id="hint" class="hidden pixel">등굣길을 열어라. SPACE 연타 (또는 탭)</div>
+  <div id="hint" class="hidden pixel">이세계 열차를 막아라. SPACE 연타 (또는 탭)</div>
 
   <div class="overlay splash" id="splashOverlay">
     <img id="splashLogo" src="train_stopper_assets/hero_front.png" alt="">
@@ -343,7 +343,7 @@
     <div class="title-lockup">
       <div class="title-plate">
         <h1 class="display-en">STOP THE TRAIN</h1>
-        <div class="title-tag">등굣길과 출근길이 선로가 된 도시</div>
+        <div class="title-tag">등굣길을 들이받아 이세계로 보내는 열차</div>
       </div>
     </div>
     <div class="menu-col">
@@ -355,7 +355,7 @@
   </div>
 
   <div class="overlay intro hidden" id="introOverlay">
-    <div class="intro-caption">통학도, 출근도<br>선로 너머에 있다</div>
+    <div class="intro-caption">들이받으면 이세계다<br>학생회가 선로에 선다</div>
     <div class="skip-hint">탭하여 스킵</div>
   </div>
 
@@ -416,13 +416,13 @@
   </div>
 
   <div class="overlay hidden" id="shopOverlay">
-    <h1>선로변 무기고</h1>
+    <h1>학생회 비품실</h1>
     <div class="sub" id="shopGoldLine">보유 골드: <b id="shopGold">0</b>G</div>
     <div class="shop-list">
       <div class="shop-item">
         <div class="shop-item-info">
-          <div class="shop-item-name pixel" id="companionItemName">직장인</div>
-          <div class="shop-item-desc" id="companionItemDesc">출근길이 막힌 직장인. 옆에서 0.5초마다 자동 사격</div>
+          <div class="shop-item-name pixel" id="companionItemName">부회장</div>
+          <div class="shop-item-desc" id="companionItemDesc">학생회 부회장. 옆에서 0.5초마다 자동 사격</div>
         </div>
         <button class="arcade shop-buy" id="buyCompanionBtn">60G</button>
       </div>
@@ -435,15 +435,15 @@
       </div>
       <div class="shop-item">
         <div class="shop-item-info">
-          <div class="shop-item-name pixel">쉴드맨</div>
-          <div class="shop-item-desc">기차의 속도를 느리게 막아줍니다 - 지속시간 1초, 일회성</div>
+          <div class="shop-item-name pixel">체육부장</div>
+          <div class="shop-item-desc">열차를 몸으로 막아 속도를 줄입니다 - 지속시간 1초, 일회성</div>
         </div>
         <button class="arcade shop-buy" id="buyShieldBtn">60G</button>
       </div>
       <div class="shop-item">
         <div class="shop-item-info">
-          <div class="shop-item-name pixel" id="shieldUpgradeItemName">쉴드맨 강화</div>
-          <div class="shop-item-desc" id="shieldUpgradeItemDesc">쉴드맨이 저지하는 동안 기차 속도 감소량이 강화되고, 버티는 시간이 0.2초 늘어납니다</div>
+          <div class="shop-item-name pixel" id="shieldUpgradeItemName">체육부장 강화</div>
+          <div class="shop-item-desc" id="shieldUpgradeItemDesc">체육부장이 저지하는 동안 열차 속도 감소량이 강화되고, 버티는 시간이 0.2초 늘어납니다</div>
         </div>
         <button class="arcade shop-buy" id="buyShieldUpgradeBtn">30G</button>
       </div>
@@ -455,7 +455,7 @@
         <button class="arcade shop-buy" id="buyReloadUpgradeBtn">30G</button>
       </div>
     </div>
-    <div class="shop-footer pixel">임시 픽셀 아트 · 본 디자인 교체 예정</div>
+    <div class="shop-footer pixel">학생회 비품 · 다음 열차를 막기 위한 장비</div>
     <button class="arcade" id="shopContinueBtn">다음 열차</button>
   </div>
 </div>
@@ -1345,19 +1345,19 @@
         buyCompanionBtn.textContent = RAMBO_REVIVE_COST + 'G 구매';
         buyCompanionBtn.disabled = gold < RAMBO_REVIVE_COST;
       } else if(companionInterval < COMPANION_BASE_INTERVAL){
-        companionItemName.textContent = '동료 복귀';
-        companionItemDesc.textContent = '쓰러진 동료를 다시 배치합니다 (기존 공격속도 업그레이드 단계 유지)';
+        companionItemName.textContent = '부회장 복귀';
+        companionItemDesc.textContent = '쓰러진 부회장을 다시 배치합니다 (기존 공격속도 업그레이드 단계 유지)';
         buyCompanionBtn.textContent = COMPANION_COST + 'G 구매';
         buyCompanionBtn.disabled = gold < COMPANION_COST;
       } else {
-        companionItemName.textContent = '직장인';
-        companionItemDesc.textContent = '출근길이 막힌 직장인. 옆에서 0.5초마다 자동 사격';
+        companionItemName.textContent = '부회장';
+        companionItemDesc.textContent = '학생회 부회장. 옆에서 0.5초마다 자동 사격';
         buyCompanionBtn.textContent = COMPANION_COST + 'G 구매';
         buyCompanionBtn.disabled = gold < COMPANION_COST;
       }
     } else if(companionInterval > COMPANION_MIN_INTERVAL){
-      companionItemName.textContent = '동료 업그레이드';
-      companionItemDesc.textContent = '동료의 공격속도가 소폭 상승합니다';
+      companionItemName.textContent = '부회장 업그레이드';
+      companionItemDesc.textContent = '부회장의 공격속도가 소폭 상승합니다';
       buyCompanionBtn.textContent = COMPANION_UPGRADE_COST + 'G 구매';
       buyCompanionBtn.disabled = gold < COMPANION_UPGRADE_COST;
     } else if(!hasDrone){
@@ -1424,13 +1424,13 @@
     }
 
     if(shieldSlowFactor > SHIELD_SLOW_MIN){
-      shieldUpgradeItemName.textContent = '쉴드맨 강화';
-      shieldUpgradeItemDesc.textContent = '쉴드맨이 저지하는 동안 기차 속도 감소량이 강화되고, 버티는 시간이 0.2초 늘어납니다';
+      shieldUpgradeItemName.textContent = '체육부장 강화';
+      shieldUpgradeItemDesc.textContent = '체육부장이 저지하는 동안 열차 속도 감소량이 강화되고, 버티는 시간이 0.2초 늘어납니다';
       buyShieldUpgradeBtn.textContent = SHIELD_SLOW_UPGRADE_COST + 'G 구매';
       buyShieldUpgradeBtn.disabled = gold < SHIELD_SLOW_UPGRADE_COST;
     } else if(!hasWarrior){
       shieldUpgradeItemName.textContent = '전사';
-      shieldUpgradeItemDesc.textContent = '쉴드맨 최종 업그레이드. 칼을 계속 휘둘러 사정거리 안의 좀비를 처치하고, 매 스윙마다 열차에 고정 50 데미지. 기차 속도 감소량 0.04, 버티는 시간 4초로 대폭 강화';
+      shieldUpgradeItemDesc.textContent = '체육부장 최종. 칼을 계속 휘둘러 사정거리 안의 이세계 개체를 처치하고, 매 스윙마다 열차에 고정 50 데미지. 열차 속도 감소량 0.04, 버티는 시간 4초';
       buyShieldUpgradeBtn.textContent = WARRIOR_COST + 'G 구매';
       buyShieldUpgradeBtn.disabled = gold < WARRIOR_COST;
     } else if(!hasIndomitable){
@@ -2468,7 +2468,7 @@
       ctx.save();
       ctx.fillStyle = 'rgba(0,0,0,0.4)';
       ctx.beginPath(); ctx.ellipse(cx+4, groundY+2, 22, 5, 0, 0, Math.PI*2); ctx.fill();
-      drawSprite(SPR.companion, cx + 10, groundY + 2, 84, 0.42);
+      drawSprite(SPR.companion, cx + 10, groundY + 2, 118, 0.40);
       if(flashT > 0){
         const m = getCompanionMuzzle(cx + 46, groundY);
         ctx.fillStyle = 'rgba(255,250,220,0.85)';
