@@ -202,7 +202,7 @@
     background: url('train_stopper_assets/ui_shop_card.png') center / 100% 100% no-repeat;
     border: none;
     padding:22px 14px 16px;
-    min-height: 210px;
+    min-height: 156px;
     text-align:center;
   }
   .shop-item-name{ font-size:12px; color:var(--flame-hot); margin-bottom:8px; }
@@ -243,20 +243,22 @@
   }
   .overlay.dim::before{ display:none; }
   #shopOverlay{
+    justify-content:flex-start;
+    padding-top: 16px;
     background:
       linear-gradient(180deg, rgba(6,8,10,0.62) 0%, rgba(6,8,10,0.88) 100%),
       url('train_stopper_assets/shop_bg.jpg') center / cover no-repeat;
   }
-  .title-lockup{ display:flex; flex-direction:column; align-items:center; gap:10px; margin-bottom:18px; }
+  .title-lockup{ display:flex; flex-direction:column; align-items:center; gap:8px; margin-bottom:8px; }
   .title-plate{
     width: min(560px, 92vw);
     background: url('train_stopper_assets/ui_title_plate.png') center / 100% 100% no-repeat;
-    padding: 22px 36px 18px;
+    padding: 16px 32px 12px;
   }
   .title-plate h1{ margin:0 0 6px; font-size:22px; }
   .title-tag{ font-size:12px; color:#c5cbe0; letter-spacing:0.08em; }
-  .menu-col{ display:flex; flex-direction:column; gap:12px; width:min(340px, 78vw); }
-  .menu-col button.arcade{ width:100%; }
+  .menu-col{ display:flex; flex-direction:column; gap:8px; width:min(340px, 78vw); }
+  .menu-col button.arcade{ width:100%; padding: 14px 24px; }
   button.arcade-ghost{
     background-image: url('train_stopper_assets/ui_menu_btn.png');
     color:#e8eef8;
@@ -266,7 +268,7 @@
   .over-card, .records-card, .settings-card{
     width: min(520px, 92vw);
     background: url('train_stopper_assets/ui_over_panel.png') center / 100% 100% no-repeat;
-    padding: 36px 40px 28px;
+    padding: 28px 36px 32px;
     margin-bottom: 14px;
   }
   .over-card h1, .records-card h1, .settings-card h1{ margin-bottom: 10px; }
@@ -280,20 +282,122 @@
     padding: 12px 22px;
     min-width: 180px;
   }
-  .hero-select{ display:flex; gap:10px; margin: 8px 0 14px; }
-  .hero-select button{
-    flex:1; font-size:13px; padding:12px 8px;
+  #startOverlay{
+    justify-content:flex-start;
+    padding-top: 20px;
   }
-  .hero-select button.active{ filter:brightness(1.18); outline:1px solid #c9a45c; }
-  #commuteLine{ margin-top: 8px; color:#e8c37a; font-size:12px; }
-  #metricsLine{ font-size:12px; color:#b7c0d4; line-height:1.7; margin-top:8px; }
+  .hero-select{
+    display:flex; gap:14px; justify-content:center;
+    margin: 4px 0 10px;
+  }
+  button.hero-card{
+    width: 102px;
+    padding: 0 0 8px;
+    background: url('train_stopper_assets/ui_portrait_frame.png') center / 100% 100% no-repeat;
+    border: none;
+    border-radius: 0;
+    box-shadow: none;
+    display:flex; flex-direction:column; align-items:center;
+    color:#f6ead0;
+    cursor:pointer;
+    font-family:'Noto Sans KR', sans-serif;
+  }
+  button.hero-card.active{
+    background-image: url('train_stopper_assets/ui_portrait_frame_on.png');
+    filter:none;
+    outline:none;
+  }
+  button.hero-card.locked,
+  button.hero-card:disabled{
+    background-image: url('train_stopper_assets/ui_portrait_frame_lock.png');
+    cursor:default;
+    opacity:1;
+  }
+  .hero-portrait{
+    width: 72px; height: 92px;
+    margin-top: 14px;
+    overflow:hidden;
+    border-radius: 4px;
+    background: #12141c;
+  }
+  .hero-portrait img{
+    width:100%; height:100%;
+    object-fit:cover;
+    object-position: center 12%;
+    display:block;
+  }
+  button.hero-card.locked .hero-portrait img{
+    filter: grayscale(0.75) brightness(0.55);
+  }
+  .hero-name{
+    font-size:12px; font-weight:700;
+    margin-top: 6px;
+    text-shadow: 0 1px 6px #000;
+  }
+  .hero-lock{
+    font-size:10px; color:#e8c37a;
+    min-height: 14px;
+    letter-spacing: 0.04em;
+  }
+  .commute-ticket{
+    width: min(420px, 78vw);
+    background: url('train_stopper_assets/ui_ticket.png') center / 100% 100% no-repeat;
+    padding: 10px 28px;
+    color:#e8c37a;
+    font-size:12px;
+    font-weight:600;
+    margin-top: 2px;
+  }
+  .stat-list{ width:100%; margin-top: 8px; }
+  .stat-row{
+    background: url('train_stopper_assets/ui_ticket.png') center / 100% 100% no-repeat;
+    display:flex; justify-content:space-between; align-items:center;
+    padding: 8px 20px;
+    margin: 6px 0;
+    font-size:13px;
+    color:#c5cbe0;
+  }
+  .stat-row b{ color: var(--flame); }
+  .shop-top{
+    display:flex; align-items:center; justify-content:space-between;
+    gap:12px;
+    width: min(640px, 94vw);
+    margin-bottom: 8px;
+  }
+  #shopOverlay h1{ font-size:18px; margin:0; text-align:left; }
+  #watchAdBtn{
+    width: min(420px, 86vw);
+    background-image: url('train_stopper_assets/ui_ticket.png');
+    margin-bottom: 8px;
+  }
   #adOverlay{
     position:absolute; inset:0; z-index:40;
-    background: rgba(6,8,16,0.88);
+    background: rgba(6,8,16,0.82);
     display:flex; flex-direction:column; align-items:center; justify-content:center;
-    color:#f6ead0; font-size:16px; font-weight:700;
+    color:#f6ead0;
   }
   #adOverlay.hidden{ display:none; }
+  .ad-plate{
+    width: min(520px, 88vw);
+    background: url('train_stopper_assets/ui_ad_plate.png') center / 100% 100% no-repeat;
+    padding: 48px 40px 36px;
+    text-align:center;
+  }
+  .ad-kicker{ font-size:11px; color:#c9a45c; letter-spacing:0.16em; font-weight:700; }
+  .ad-title{ font-size:22px; color:#f6ead0; margin: 8px 0 6px; font-weight:700; }
+  .ad-time{ font-size:14px; color:#e8c37a; }
+  .ad-bar{
+    margin: 16px auto 0;
+    width: 70%; height: 6px;
+    background: rgba(0,0,0,0.45);
+    border: 1px solid rgba(201,164,92,0.45);
+    border-radius: 99px;
+    overflow:hidden;
+  }
+  .ad-bar i{
+    display:block; height:100%; width:100%;
+    background: linear-gradient(90deg, #c9a45c, #e8c37a);
+  }
   #splashLogo{
     width:120px; height:120px; object-fit:cover; object-position:center 12%;
     border:1px solid rgba(201,164,92,0.55);
@@ -358,12 +462,20 @@
       <div class="title-plate">
         <h1 class="display-en">STOP THE TRAIN</h1>
         <div class="title-tag">등굣길을 들이받아 이세계로 보내는 열차</div>
-        <div id="commuteLine">내일 출근을 기록하세요</div>
       </div>
+      <div class="commute-ticket" id="commuteLine">내일 출근을 기록하세요</div>
     </div>
     <div class="hero-select" id="heroSelect">
-      <button class="arcade arcade-ghost" id="heroPresidentBtn">회장</button>
-      <button class="arcade arcade-ghost" id="heroViceBtn" disabled>부회장 (5스테이지)</button>
+      <button type="button" class="hero-card active" id="heroPresidentBtn">
+        <span class="hero-portrait"><img src="train_stopper_assets/hero_front.png" alt=""></span>
+        <span class="hero-name">회장</span>
+        <span class="hero-lock"></span>
+      </button>
+      <button type="button" class="hero-card locked" id="heroViceBtn" disabled>
+        <span class="hero-portrait"><img src="train_stopper_assets/companion_front.png" alt=""></span>
+        <span class="hero-name">부회장</span>
+        <span class="hero-lock" id="heroViceLock">5스테이지</span>
+      </button>
     </div>
     <div class="menu-col">
       <button class="arcade" id="startBtn">게임 시작</button>
@@ -417,11 +529,11 @@
   <div class="overlay hidden" id="recordsOverlay">
     <div class="records-card">
       <h1>최고 기록</h1>
-      <div class="sub">
-        최고 스테이지: <b id="recordStage">1</b><br>
-        최고 연타: <b id="recordMash">0</b> 타/초<br>
-        출근 스트릭: <b id="recordStreak">1</b>일<br>
-        해금: <b id="recordUnlock">회장</b>
+      <div class="stat-list">
+        <div class="stat-row"><span>최고 스테이지</span><b id="recordStage">1</b></div>
+        <div class="stat-row"><span>최고 연타</span><b id="recordMash">0</b></div>
+        <div class="stat-row"><span>출근 스트릭</span><b id="recordStreak">1</b></div>
+        <div class="stat-row"><span>해금</span><b id="recordUnlock">회장</b></div>
       </div>
     </div>
     <button class="arcade arcade-ghost" id="recordsCloseBtn">닫기</button>
@@ -430,7 +542,12 @@
   <div class="overlay hidden" id="settingsOverlay">
     <div class="settings-card">
       <h1>설정</h1>
-      <div class="sub" id="metricsLine">측정 로딩…</div>
+      <div class="stat-list" id="metricsLine">
+        <div class="stat-row"><span>방문</span><b id="mVisits">0</b></div>
+        <div class="stat-row"><span>1스테이지 시작</span><b id="mStarts">0</b></div>
+        <div class="stat-row"><span>1스테이지 클리어</span><b id="mClears">0</b></div>
+        <div class="stat-row"><span>D1 복귀</span><b id="mD1">0</b></div>
+      </div>
     </div>
     <button class="arcade arcade-ghost" id="muteBtn" style="margin-bottom:10px;">음소거: OFF</button>
     <button class="arcade arcade-ghost" id="shakeBtn" style="margin-bottom:16px;">화면 흔들림: ON</button>
@@ -438,8 +555,10 @@
   </div>
 
   <div class="overlay hidden" id="shopOverlay">
-    <h1>학생회 비품실</h1>
-    <div class="sub" id="shopGoldLine">보유 골드: <b id="shopGold">0</b>G</div>
+    <div class="shop-top">
+      <h1>학생회 비품실</h1>
+      <div class="sub" id="shopGoldLine">보유 골드: <b id="shopGold">0</b>G</div>
+    </div>
     <div class="shop-list">
       <div class="shop-item">
         <div class="shop-item-info">
@@ -481,7 +600,14 @@
     <button class="arcade arcade-ghost" id="watchAdBtn" style="margin-bottom:10px;width:min(420px,86vw);">광고 보고 +60G</button>
     <button class="arcade" id="shopContinueBtn">다음 열차</button>
   </div>
-  <div id="adOverlay" class="hidden">광고 · 2초</div>
+  <div id="adOverlay" class="hidden">
+    <div class="ad-plate">
+      <div class="ad-kicker">학생회 방송</div>
+      <div class="ad-title">광고</div>
+      <div class="ad-time"><span id="adTime">2</span>초</div>
+      <div class="ad-bar"><i id="adBarFill"></i></div>
+    </div>
+  </div>
 </div>
 
 <script>
@@ -1230,8 +1356,10 @@
     const hero = selectedHero();
     if(heroViceBtn){
       heroViceBtn.disabled = !unlocked;
-      heroViceBtn.textContent = unlocked ? '부회장' : '부회장 (5스테이지)';
+      heroViceBtn.classList.toggle('locked', !unlocked);
       heroViceBtn.classList.toggle('active', hero === 'vice');
+      const lock = document.getElementById('heroViceLock');
+      if(lock) lock.textContent = unlocked ? '' : '5스테이지';
     }
     if(heroPresidentBtn) heroPresidentBtn.classList.toggle('active', hero === 'president');
   }
@@ -1256,16 +1384,18 @@
   function refreshSettingsUI(){
     muteBtn.textContent = '음소거: ' + (muted ? 'ON' : 'OFF');
     shakeBtn.textContent = '화면 흔들림: ' + (shakeEnabled ? 'ON' : 'OFF');
-    if(!metricsLineEl) return;
     const m = loadMetrics();
     const starts = m.stage1Starts || 0;
     const clears = m.stage1Clears || 0;
     const rate = starts ? Math.round(clears / starts * 100) : 0;
-    metricsLineEl.textContent =
-      '방문 ' + (m.visits || 0) +
-      ' · 1스테이지 시작 ' + starts +
-      ' · 클리어 ' + clears + ' (' + rate + '%)' +
-      ' · D1 복귀 ' + (m.d1Returns || 0);
+    const visitsEl = document.getElementById('mVisits');
+    const startsEl = document.getElementById('mStarts');
+    const clearsEl = document.getElementById('mClears');
+    const d1El = document.getElementById('mD1');
+    if(visitsEl) visitsEl.textContent = String(m.visits || 0);
+    if(startsEl) startsEl.textContent = String(starts);
+    if(clearsEl) clearsEl.textContent = starts ? (clears + ' (' + rate + '%)') : String(clears);
+    if(d1El) d1El.textContent = String(m.d1Returns || 0);
   }
   function saveBests(){
     const prevS = lsNum(LS.bestStage, 1);
@@ -1808,11 +1938,21 @@
   function playRewardedAd(){
     if(adTimer || !adOverlay) return;
     sfx('ui');
+    const timeEl = document.getElementById('adTime');
+    const bar = document.getElementById('adBarFill');
     adOverlay.classList.remove('hidden');
     let left = 2;
-    adOverlay.textContent = '광고 · ' + left + '초';
+    if(timeEl) timeEl.textContent = String(left);
+    if(bar){
+      bar.style.transition = 'none';
+      bar.style.width = '100%';
+      void bar.offsetWidth;
+      bar.style.transition = 'width 2s linear';
+      bar.style.width = '0%';
+    }
     adTimer = setInterval(()=>{
       left -= 1;
+      if(timeEl) timeEl.textContent = String(Math.max(0, left));
       if(left <= 0){
         clearInterval(adTimer);
         adTimer = 0;
@@ -1821,8 +1961,6 @@
         updateGoldUI();
         if(state === 'shop') updateShopUI();
         sfx('ui');
-      } else {
-        adOverlay.textContent = '광고 · ' + left + '초';
       }
     }, 1000);
   }
