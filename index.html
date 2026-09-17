@@ -280,6 +280,20 @@
     padding: 12px 22px;
     min-width: 180px;
   }
+  .hero-select{ display:flex; gap:10px; margin: 8px 0 14px; }
+  .hero-select button{
+    flex:1; font-size:13px; padding:12px 8px;
+  }
+  .hero-select button.active{ filter:brightness(1.18); outline:1px solid #c9a45c; }
+  #commuteLine{ margin-top: 8px; color:#e8c37a; font-size:12px; }
+  #metricsLine{ font-size:12px; color:#b7c0d4; line-height:1.7; margin-top:8px; }
+  #adOverlay{
+    position:absolute; inset:0; z-index:40;
+    background: rgba(6,8,16,0.88);
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    color:#f6ead0; font-size:16px; font-weight:700;
+  }
+  #adOverlay.hidden{ display:none; }
   #splashLogo{
     width:120px; height:120px; object-fit:cover; object-position:center 12%;
     border:1px solid rgba(201,164,92,0.55);
@@ -344,7 +358,12 @@
       <div class="title-plate">
         <h1 class="display-en">STOP THE TRAIN</h1>
         <div class="title-tag">등굣길을 들이받아 이세계로 보내는 열차</div>
+        <div id="commuteLine">내일 출근을 기록하세요</div>
       </div>
+    </div>
+    <div class="hero-select" id="heroSelect">
+      <button class="arcade arcade-ghost" id="heroPresidentBtn">회장</button>
+      <button class="arcade arcade-ghost" id="heroViceBtn" disabled>부회장 (5스테이지)</button>
     </div>
     <div class="menu-col">
       <button class="arcade" id="startBtn">게임 시작</button>
@@ -400,7 +419,9 @@
       <h1>최고 기록</h1>
       <div class="sub">
         최고 스테이지: <b id="recordStage">1</b><br>
-        최고 연타: <b id="recordMash">0</b> 타/초
+        최고 연타: <b id="recordMash">0</b> 타/초<br>
+        출근 스트릭: <b id="recordStreak">1</b>일<br>
+        해금: <b id="recordUnlock">회장</b>
       </div>
     </div>
     <button class="arcade arcade-ghost" id="recordsCloseBtn">닫기</button>
@@ -409,6 +430,7 @@
   <div class="overlay hidden" id="settingsOverlay">
     <div class="settings-card">
       <h1>설정</h1>
+      <div class="sub" id="metricsLine">측정 로딩…</div>
     </div>
     <button class="arcade arcade-ghost" id="muteBtn" style="margin-bottom:10px;">음소거: OFF</button>
     <button class="arcade arcade-ghost" id="shakeBtn" style="margin-bottom:16px;">화면 흔들림: ON</button>
@@ -455,9 +477,11 @@
         <button class="arcade shop-buy" id="buyReloadUpgradeBtn">30G</button>
       </div>
     </div>
-    <div class="shop-footer pixel">학생회 비품 · 다음 열차를 막기 위한 장비</div>
+    <div class="shop-footer pixel">웹 플레이 · 승패 스탯은 광고로 살 수 없습니다</div>
+    <button class="arcade arcade-ghost" id="watchAdBtn" style="margin-bottom:10px;width:min(420px,86vw);">광고 보고 +60G</button>
     <button class="arcade" id="shopContinueBtn">다음 열차</button>
   </div>
+  <div id="adOverlay" class="hidden">광고 · 2초</div>
 </div>
 
 <script>
@@ -510,8 +534,17 @@
   const finalTrainsEl = document.getElementById('finalTrains');
   const recordStageEl = document.getElementById('recordStage');
   const recordMashEl = document.getElementById('recordMash');
+  const recordStreakEl = document.getElementById('recordStreak');
+  const recordUnlockEl = document.getElementById('recordUnlock');
+  const commuteLineEl = document.getElementById('commuteLine');
+  const metricsLineEl = document.getElementById('metricsLine');
+  const heroPresidentBtn = document.getElementById('heroPresidentBtn');
+  const heroViceBtn = document.getElementById('heroViceBtn');
+  const watchAdBtn = document.getElementById('watchAdBtn');
+  const adOverlay = document.getElementById('adOverlay');
   const muteBtn = document.getElementById('muteBtn');
   const shakeBtn = document.getElementById('shakeBtn');
+  let adTimer = 0;
 
   let W = 0, H = 0, DPR = 1;
 
@@ -722,6 +755,74 @@
   let roundBestMash = 0;
   let shakeEnabled = true;
   let muted = false;
+  let audioCtx = null;
+  function getAC(){
+    if(!audioCtx){
+      const AC = window.AudioContext || window.webkitAudioContext;
+      if(AC) audioCtx = new AC();
+    }
+    if(audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
+    return audioCtx;
+  }
+  function haptic(ms){
+    if(muted) return;
+    try{ if(navigator.vibrate) navigator.vibrate(ms); }catch(e){}
+  }
+  function sfx(kind){
+    if(muted) return;
+    const ac = getAC();
+    if(!ac) return;
+    const t = ac.currentTime;
+    const o = ac.createOscillator();
+    const g = ac.createGain();
+    o.connect(g); g.connect(ac.destination);
+    if(kind === 'shot'){
+      o.type = 'square';
+      o.frequency.setValueAtTime(180, t);
+      o.frequency.exponentialRampToValueAtTime(70, t+0.08);
+      g.gain.setValueAtTime(0.12, t);
+      g.gain.exponentialRampToValueAtTime(0.001, t+0.09);
+      o.start(t); o.stop(t+0.1);
+      haptic(18);
+    } else if(kind === 'metal'){
+      o.type = 'sawtooth';
+      o.frequency.setValueAtTime(320, t);
+      o.frequency.exponentialRampToValueAtTime(90, t+0.12);
+      g.gain.setValueAtTime(0.08, t);
+      g.gain.exponentialRampToValueAtTime(0.001, t+0.13);
+      o.start(t); o.stop(t+0.14);
+      haptic(8);
+    } else if(kind === 'pop'){
+      o.type = 'triangle';
+      o.frequency.setValueAtTime(140, t);
+      o.frequency.exponentialRampToValueAtTime(40, t+0.16);
+      g.gain.setValueAtTime(0.1, t);
+      g.gain.exponentialRampToValueAtTime(0.001, t+0.18);
+      o.start(t); o.stop(t+0.18);
+      haptic(30);
+    } else if(kind === 'clear'){
+      o.type = 'sine';
+      o.frequency.setValueAtTime(520, t);
+      o.frequency.exponentialRampToValueAtTime(880, t+0.22);
+      g.gain.setValueAtTime(0.09, t);
+      g.gain.exponentialRampToValueAtTime(0.001, t+0.28);
+      o.start(t); o.stop(t+0.3);
+    } else if(kind === 'fail'){
+      o.type = 'sine';
+      o.frequency.setValueAtTime(110, t);
+      o.frequency.exponentialRampToValueAtTime(40, t+0.4);
+      g.gain.setValueAtTime(0.12, t);
+      g.gain.exponentialRampToValueAtTime(0.001, t+0.45);
+      o.start(t); o.stop(t+0.46);
+      haptic(80);
+    } else if(kind === 'ui'){
+      o.type = 'sine';
+      o.frequency.setValueAtTime(660, t);
+      g.gain.setValueAtTime(0.05, t);
+      g.gain.exponentialRampToValueAtTime(0.001, t+0.08);
+      o.start(t); o.stop(t+0.09);
+    }
+  }
   let stage = 1;
   let trainMaxHP, trainHP, resistance, approachSpeed, dist;
 
@@ -874,8 +975,8 @@
   let thxBubbleTimer = 0;
   let thxX = 0, thxY = 0;
 
-  // zombies that burst out of the train from stage 22 onward
-  const ZOMBIE_FIRST_STAGE = 22;
+  // zombies that burst out of the train from stage 1 (ad/first-run hook)
+  const ZOMBIE_FIRST_STAGE = 1;
   const ZOMBIE_MULTI_STAGE = 25;   // from this stage, up to 2 can appear in one round
   const ZOMBIE_TRIPLE_STAGE = 30;  // from this stage, up to 3 can appear in one round
   const ZOMBIE_FIVE_STAGE = 35;    // from this stage, up to 5 can appear in one round
@@ -889,10 +990,11 @@
   let zombieSpeed = ZOMBIE_BASE_SPEED;
 
   function zombieAppearChance(n){
-    // 23~29: 30%→70% linear; 30+: 70% + (n-30)*5% (cap 100%)
+    // stage 1 guaranteed elsewhere. 2~29: 30%→70% linear; 30+: 70%+(n-30)*5%
+    if(n < 2) return 1;
     if(n < ZOMBIE_TRIPLE_STAGE){
-      const stepEarly = (0.70 - 0.30) / ((ZOMBIE_TRIPLE_STAGE - 1) - (ZOMBIE_FIRST_STAGE + 1));
-      return Math.min(1, 0.30 + (n - (ZOMBIE_FIRST_STAGE + 1)) * stepEarly);
+      const stepEarly = (0.70 - 0.30) / ((ZOMBIE_TRIPLE_STAGE - 1) - 2);
+      return Math.min(1, 0.30 + (n - 2) * stepEarly);
     }
     return Math.min(1, 0.70 + (n - ZOMBIE_TRIPLE_STAGE) * 0.05);
   }
@@ -1036,7 +1138,7 @@
     }
     civilianSpawnTime = 2000 + Math.random()*3000; // somewhere between 2s and 5s into the round
 
-    // zombies: from stage 22 onward. Stage 22 is a guaranteed single spawn;
+    // zombies: stage 1 is a guaranteed single spawn so the first round matches ads;
     // every stage after that rolls independently for whether it happens at all,
     // and (from stage 25+) how many show up together.
     zombies = [];
@@ -1061,8 +1163,84 @@
     bestMash: 'stt_best_mash',
     mute: 'stt_mute',
     shake: 'stt_shake',
-    seenIntro: 'stt_seen_intro'
+    seenIntro: 'stt_seen_intro',
+    hero: 'stt_hero',
+    unlockVice: 'stt_unlock_vice',
+    commuteDate: 'stt_commute_date',
+    streak: 'stt_streak',
+    metrics: 'stt_metrics'
   };
+  function todayStr(){
+    const d = new Date();
+    return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+  }
+  function yesterdayStr(){
+    const d = new Date(); d.setDate(d.getDate()-1);
+    return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+  }
+  function loadMetrics(){
+    try{ return JSON.parse(localStorage.getItem(LS.metrics) || '{}'); }catch(e){ return {}; }
+  }
+  function saveMetrics(m){ localStorage.setItem(LS.metrics, JSON.stringify(m)); }
+  function trackVisit(){
+    const m = loadMetrics();
+    const t = todayStr();
+    const last = m.lastSeen || '';
+    m.visits = (m.visits || 0) + 1;
+    if(!m.firstSeen) m.firstSeen = t;
+    if(last !== t && m.firstSeen === yesterdayStr()) m.d1Returns = 1;
+    m.lastSeen = t;
+    saveMetrics(m);
+  }
+  function track(key){
+    const m = loadMetrics();
+    m[key] = (m[key] || 0) + 1;
+    saveMetrics(m);
+  }
+  function viceUnlocked(){
+    return localStorage.getItem(LS.unlockVice) === '1' || lsNum(LS.bestStage, 1) >= 5;
+  }
+  function selectedHero(){
+    const h = localStorage.getItem(LS.hero) || 'president';
+    if(h === 'vice' && !viceUnlocked()) return 'president';
+    return h;
+  }
+  function markCommute(){
+    const t = todayStr();
+    const last = localStorage.getItem(LS.commuteDate) || '';
+    const streakNow = lsNum(LS.streak, 0);
+    if(last === t) return { bonus: 0, streak: streakNow, already: true };
+    const streak = (last === yesterdayStr()) ? streakNow + 1 : 1;
+    localStorage.setItem(LS.commuteDate, t);
+    localStorage.setItem(LS.streak, String(streak));
+    return { bonus: Math.min(50, 10 * streak), streak, already: false };
+  }
+  function refreshCommuteLine(){
+    if(!commuteLineEl) return;
+    const last = localStorage.getItem(LS.commuteDate) || '';
+    const streak = lsNum(LS.streak, 0);
+    const t = todayStr();
+    if(last === t) commuteLineEl.textContent = '오늘 출근 · 스트릭 ' + streak + '일 · 내일도 출근';
+    else if(last === yesterdayStr()) commuteLineEl.textContent = '어제 ' + streak + '일 · 오늘 출근하면 이어집니다';
+    else if(streak > 0) commuteLineEl.textContent = '출근이 끊겼습니다 · 오늘 다시 서세요';
+    else commuteLineEl.textContent = '내일 출근을 기록하세요';
+  }
+  function refreshHeroSelect(){
+    const unlocked = viceUnlocked();
+    const hero = selectedHero();
+    if(heroViceBtn){
+      heroViceBtn.disabled = !unlocked;
+      heroViceBtn.textContent = unlocked ? '부회장' : '부회장 (5스테이지)';
+      heroViceBtn.classList.toggle('active', hero === 'vice');
+    }
+    if(heroPresidentBtn) heroPresidentBtn.classList.toggle('active', hero === 'president');
+  }
+  function refreshRecordsUI(){
+    recordStageEl.textContent = lsNum(LS.bestStage, 1);
+    recordMashEl.textContent = lsNum(LS.bestMash, 0);
+    if(recordStreakEl) recordStreakEl.textContent = String(lsNum(LS.streak, 0));
+    if(recordUnlockEl) recordUnlockEl.textContent = viceUnlocked() ? '회장 · 부회장' : '회장';
+  }
   function lsNum(key, fallback){
     const v = parseInt(localStorage.getItem(key) || '', 10);
     return isNaN(v) ? fallback : v;
@@ -1070,11 +1248,24 @@
   function loadPrefs(){
     muted = localStorage.getItem(LS.mute) === '1';
     shakeEnabled = localStorage.getItem(LS.shake) !== '0';
+    trackVisit();
     refreshSettingsUI();
+    refreshHeroSelect();
+    refreshCommuteLine();
   }
   function refreshSettingsUI(){
     muteBtn.textContent = '음소거: ' + (muted ? 'ON' : 'OFF');
     shakeBtn.textContent = '화면 흔들림: ' + (shakeEnabled ? 'ON' : 'OFF');
+    if(!metricsLineEl) return;
+    const m = loadMetrics();
+    const starts = m.stage1Starts || 0;
+    const clears = m.stage1Clears || 0;
+    const rate = starts ? Math.round(clears / starts * 100) : 0;
+    metricsLineEl.textContent =
+      '방문 ' + (m.visits || 0) +
+      ' · 1스테이지 시작 ' + starts +
+      ' · 클리어 ' + clears + ' (' + rate + '%)' +
+      ' · D1 복귀 ' + (m.d1Returns || 0);
   }
   function saveBests(){
     const prevS = lsNum(LS.bestStage, 1);
@@ -1100,6 +1291,8 @@
     hideAllFlow();
     startOverlay.classList.remove('hidden');
     setHud(false);
+    refreshHeroSelect();
+    refreshCommuteLine();
   }
   function showIntro(){
     state = 'intro';
@@ -1131,6 +1324,7 @@
     setHud(true, true);
   }
   function requestStart(){
+    getAC();
     if(localStorage.getItem(LS.seenIntro) === '1'){
       beginRun({ stage: 1, gold: 0, skipIntro: true });
     } else {
@@ -1142,6 +1336,11 @@
     trainsDestroyed = opts.trainsDestroyed || 0;
     stage = opts.stage || 1;
     gold = opts.gold || 0;
+    if(stage === 1){
+      gold += markCommute().bonus;
+      track('stage1Starts');
+      refreshCommuteLine();
+    }
     updateGoldUI();
     hideAllFlow();
     shopOverlay.classList.add('hidden');
@@ -1149,6 +1348,7 @@
     showBanner();
   }
   function skipRitual(){
+    getAC();
     flowUntil = 0;
     if(state === 'splash'){ showTitle(); return true; }
     if(state === 'intro'){ beginRun({ stage: 1, gold: 0, skipIntro: true }); return true; }
@@ -1244,6 +1444,7 @@
   }
 
   function gameOver(){
+    sfx('fail');
     state = 'over';
     saveBests();
     finalStageEl.textContent = stage;
@@ -1317,6 +1518,9 @@
   }
 
   function nextStage(){
+    sfx('clear');
+    if(stage === 1) track('stage1Clears');
+    if(stage >= 5) localStorage.setItem(LS.unlockVice, '1');
     state = 'settle';
     const gained = Math.max(0, gold - goldAtStageStart);
     settleTitle.textContent = 'STAGE ' + String(stage).padStart(2,'0') + ' CLEAR';
@@ -1595,10 +1799,32 @@
   }
 
   function closeShop(){
+    if(adTimer) return;
     shopOverlay.classList.add('hidden');
     stage += 1;
     initStage(stage);
     showSting();
+  }
+  function playRewardedAd(){
+    if(adTimer || !adOverlay) return;
+    sfx('ui');
+    adOverlay.classList.remove('hidden');
+    let left = 2;
+    adOverlay.textContent = '광고 · ' + left + '초';
+    adTimer = setInterval(()=>{
+      left -= 1;
+      if(left <= 0){
+        clearInterval(adTimer);
+        adTimer = 0;
+        adOverlay.classList.add('hidden');
+        gold += 60;
+        updateGoldUI();
+        if(state === 'shop') updateShopUI();
+        sfx('ui');
+      } else {
+        adOverlay.textContent = '광고 · ' + left + '초';
+      }
+    }, 1000);
   }
 
   const PLAYER_SPR = { destH: 148, ax: 0.42, mNx: 0.97, mNy: 0.18 };
@@ -1639,6 +1865,7 @@
     // train's left edge = currentTrainX - 130 (half body width); visible once that edge enters the canvas
     const trainVisible = currentTrainX <= W + 130;
     if(!trainVisible) return false;
+    sfx('metal');
 
     const dmg = (flatDamage !== undefined) ? flatDamage : Math.round(hitDamage * dmgMult);
     trainHP = Math.max(0, trainHP - dmg);
@@ -1727,6 +1954,7 @@
   }
 
   function explodeZombie(x, y){
+    sfx('pop');
     shake = Math.min(14, shake + 7);
     for(let i=0;i<20;i++){
       const ang = Math.random()*Math.PI*2;
@@ -1795,6 +2023,7 @@
   }
 
   function fireOneRound(stats){
+    sfx('shot');
     const px = W * PLAYER_X_RATIO;
     const groundY = H * 0.82;
     const m = getPlayerMuzzle(px, groundY);
@@ -1971,27 +2200,43 @@
     onHit();
   });
 
-  document.getElementById('startBtn').addEventListener('click', requestStart);
-  document.getElementById('retryBtn').addEventListener('click', ()=> beginRun({ stage:1, gold:0, skipIntro:true }));
-  document.getElementById('overTitleBtn').addEventListener('click', goTitle);
+  document.getElementById('startBtn').addEventListener('click', ()=>{ sfx('ui'); requestStart(); });
+  document.getElementById('retryBtn').addEventListener('click', ()=>{ sfx('ui'); beginRun({ stage:1, gold:0, skipIntro:true }); });
+  document.getElementById('overTitleBtn').addEventListener('click', ()=>{ sfx('ui'); goTitle(); });
   document.getElementById('recordsBtn').addEventListener('click', ()=>{
-    recordStageEl.textContent = lsNum(LS.bestStage, 1);
-    recordMashEl.textContent = lsNum(LS.bestMash, 0);
+    sfx('ui');
+    refreshRecordsUI();
     hideAllFlow();
     recordsOverlay.classList.remove('hidden');
     state = 'records';
   });
-  document.getElementById('recordsCloseBtn').addEventListener('click', showTitle);
+  document.getElementById('recordsCloseBtn').addEventListener('click', ()=>{ sfx('ui'); showTitle(); });
   document.getElementById('settingsBtn').addEventListener('click', ()=>{
+    sfx('ui');
     hideAllFlow();
     settingsOverlay.classList.remove('hidden');
     state = 'settings';
     refreshSettingsUI();
   });
-  document.getElementById('settingsCloseBtn').addEventListener('click', showTitle);
+  document.getElementById('settingsCloseBtn').addEventListener('click', ()=>{ sfx('ui'); showTitle(); });
+  if(heroPresidentBtn) heroPresidentBtn.addEventListener('click', (e)=>{
+    e.stopPropagation();
+    sfx('ui');
+    localStorage.setItem(LS.hero, 'president');
+    refreshHeroSelect();
+  });
+  if(heroViceBtn) heroViceBtn.addEventListener('click', (e)=>{
+    e.stopPropagation();
+    if(!viceUnlocked()) return;
+    sfx('ui');
+    localStorage.setItem(LS.hero, 'vice');
+    refreshHeroSelect();
+  });
+  if(watchAdBtn) watchAdBtn.addEventListener('click', (e)=>{ e.stopPropagation(); playRewardedAd(); });
   muteBtn.addEventListener('click', ()=>{
     muted = !muted;
     localStorage.setItem(LS.mute, muted ? '1' : '0');
+    if(!muted) getAC();
     refreshSettingsUI();
   });
   shakeBtn.addEventListener('click', ()=>{
@@ -2100,7 +2345,11 @@
       ctx.beginPath(); ctx.ellipse(px+10, groundY+3, 30, 7, 0, 0, Math.PI*2); ctx.fill();
       ctx.translate(kick, 0);
       let pose = SPR.player;
-      if(atkFrame >= 0 && SPR.playerAtk && sprOkFrame(SPR.playerAtk[atkFrame])) pose = SPR.playerAtk[atkFrame];
+      if(selectedHero() === 'vice' && sprOk('companion')){
+        pose = SPR.companion;
+      } else if(atkFrame >= 0 && SPR.playerAtk && sprOkFrame(SPR.playerAtk[atkFrame])){
+        pose = SPR.playerAtk[atkFrame];
+      }
       drawSprite(pose, px + 8, groundY + 2, PLAYER_SPR.destH, PLAYER_SPR.ax);
       if(flashT > 0){
         const m = getPlayerMuzzle(px, groundY);
@@ -3927,6 +4176,7 @@
       // the train's own speed and free to overlap anything else on screen.
       if(zombieRoundWillSpawn && !zombieSpawnedThisRound && currentTrainX <= W + 130){
         zombieSpawnedThisRound = true;
+        sfx('pop');
         for(let i=0;i<zombieRoundCount;i++){
           zombies.push({
             x: currentTrainX + 176 + i*26,
