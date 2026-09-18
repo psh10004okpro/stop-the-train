@@ -502,18 +502,6 @@
       </div>
       <div class="commute-ticket" id="commuteLine">내일 출근을 기록하세요</div>
     </div>
-    <div class="hero-select" id="heroSelect">
-      <button type="button" class="hero-card active" id="heroPresidentBtn">
-        <span class="hero-portrait"><img src="train_stopper_assets/hero_front.png" alt=""></span>
-        <span class="hero-name">회장</span>
-        <span class="hero-lock"></span>
-      </button>
-      <button type="button" class="hero-card locked" id="heroViceBtn" disabled>
-        <span class="hero-portrait"><img src="train_stopper_assets/companion_front.png" alt=""></span>
-        <span class="hero-name">부회장</span>
-        <span class="hero-lock" id="heroViceLock">5스테이지</span>
-      </button>
-    </div>
     <div class="menu-col">
       <button class="arcade" id="startBtn">게임 시작</button>
       <button class="arcade arcade-ghost" id="recordsBtn">최고 기록</button>
@@ -523,7 +511,7 @@
   </div>
 
   <div class="overlay intro hidden" id="introOverlay">
-    <div class="intro-caption">들이받으면 이세계다<br>학생회가 선로에 선다</div>
+    <div class="intro-caption">들이받으면 이세계다<br>선도부가 선로에 선다</div>
     <div class="skip-hint">탭하여 스킵</div>
   </div>
 
@@ -570,7 +558,7 @@
         <div class="stat-row"><span>최고 스테이지</span><b id="recordStage">1</b></div>
         <div class="stat-row"><span>최고 연타</span><b id="recordMash">0</b></div>
         <div class="stat-row"><span>출근 스트릭</span><b id="recordStreak">1</b></div>
-        <div class="stat-row"><span>해금</span><b id="recordUnlock">회장</b></div>
+        <div class="stat-row"><span>해금</span><b id="recordUnlock">선도부장</b></div>
       </div>
     </div>
     <button class="arcade arcade-ghost" id="recordsCloseBtn">닫기</button>
@@ -593,14 +581,14 @@
 
   <div class="overlay hidden" id="shopOverlay">
     <div class="shop-top">
-      <h1>학생회 비품실</h1>
+      <h1>선도부 비품실</h1>
       <div class="sub" id="shopGoldLine">보유 골드: <b id="shopGold">0</b>G</div>
     </div>
     <div class="shop-list">
       <div class="shop-item">
         <div class="shop-item-info">
-          <div class="shop-item-name pixel" id="companionItemName">부회장</div>
-          <div class="shop-item-desc" id="companionItemDesc">학생회 부회장. 옆에서 0.5초마다 자동 사격</div>
+          <div class="shop-item-name pixel" id="companionItemName">선도부 위원</div>
+          <div class="shop-item-desc" id="companionItemDesc">선도부 위원. 옆에서 0.5초마다 자동 사격</div>
         </div>
         <button class="arcade shop-buy" id="buyCompanionBtn">60G</button>
       </div>
@@ -639,7 +627,7 @@
   </div>
   <div id="adOverlay" class="hidden">
     <div class="ad-plate">
-      <div class="ad-kicker">학생회 방송</div>
+      <div class="ad-kicker">선도부 방송</div>
       <div class="ad-title">광고</div>
       <div class="ad-time"><span id="adTime">2</span>초</div>
       <div class="ad-bar"><i id="adBarFill"></i></div>
@@ -701,8 +689,6 @@
   const recordUnlockEl = document.getElementById('recordUnlock');
   const commuteLineEl = document.getElementById('commuteLine');
   const metricsLineEl = document.getElementById('metricsLine');
-  const heroPresidentBtn = document.getElementById('heroPresidentBtn');
-  const heroViceBtn = document.getElementById('heroViceBtn');
   const watchAdBtn = document.getElementById('watchAdBtn');
   const adOverlay = document.getElementById('adOverlay');
   const muteBtn = document.getElementById('muteBtn');
@@ -1327,8 +1313,6 @@
     mute: 'stt_mute',
     shake: 'stt_shake',
     seenIntro: 'stt_seen_intro',
-    hero: 'stt_hero',
-    unlockVice: 'stt_unlock_vice',
     commuteDate: 'stt_commute_date',
     streak: 'stt_streak',
     metrics: 'stt_metrics'
@@ -1360,14 +1344,6 @@
     m[key] = (m[key] || 0) + 1;
     saveMetrics(m);
   }
-  function viceUnlocked(){
-    return localStorage.getItem(LS.unlockVice) === '1' || lsNum(LS.bestStage, 1) >= 5;
-  }
-  function selectedHero(){
-    const h = localStorage.getItem(LS.hero) || 'president';
-    if(h === 'vice' && !viceUnlocked()) return 'president';
-    return h;
-  }
   function markCommute(){
     const t = todayStr();
     const last = localStorage.getItem(LS.commuteDate) || '';
@@ -1383,28 +1359,16 @@
     const last = localStorage.getItem(LS.commuteDate) || '';
     const streak = lsNum(LS.streak, 0);
     const t = todayStr();
-    if(last === t) commuteLineEl.textContent = '오늘 출근 · 스트릭 ' + streak + '일 · 내일도 출근';
-    else if(last === yesterdayStr()) commuteLineEl.textContent = '어제 ' + streak + '일 · 오늘 출근하면 이어집니다';
-    else if(streak > 0) commuteLineEl.textContent = '출근이 끊겼습니다 · 오늘 다시 서세요';
-    else commuteLineEl.textContent = '내일 출근을 기록하세요';
-  }
-  function refreshHeroSelect(){
-    const unlocked = viceUnlocked();
-    const hero = selectedHero();
-    if(heroViceBtn){
-      heroViceBtn.disabled = !unlocked;
-      heroViceBtn.classList.toggle('locked', !unlocked);
-      heroViceBtn.classList.toggle('active', hero === 'vice');
-      const lock = document.getElementById('heroViceLock');
-      if(lock) lock.textContent = unlocked ? '' : '5스테이지';
-    }
-    if(heroPresidentBtn) heroPresidentBtn.classList.toggle('active', hero === 'president');
+    if(last === t) commuteLineEl.textContent = '오늘 근무 · 스트릭 ' + streak + '일 · 내일도 근무';
+    else if(last === yesterdayStr()) commuteLineEl.textContent = '어제 ' + streak + '일 · 오늘 근무하면 이어집니다';
+    else if(streak > 0) commuteLineEl.textContent = '근무가 끊겼습니다 · 오늘 다시 서세요';
+    else commuteLineEl.textContent = '내일 근무를 기록하세요';
   }
   function refreshRecordsUI(){
     recordStageEl.textContent = lsNum(LS.bestStage, 1);
     recordMashEl.textContent = lsNum(LS.bestMash, 0);
     if(recordStreakEl) recordStreakEl.textContent = String(lsNum(LS.streak, 0));
-    if(recordUnlockEl) recordUnlockEl.textContent = viceUnlocked() ? '회장 · 부회장' : '회장';
+    if(recordUnlockEl) recordUnlockEl.textContent = '선도부장';
   }
   function lsNum(key, fallback){
     const v = parseInt(localStorage.getItem(key) || '', 10);
@@ -1415,7 +1379,6 @@
     shakeEnabled = localStorage.getItem(LS.shake) !== '0';
     trackVisit();
     refreshSettingsUI();
-    refreshHeroSelect();
     refreshCommuteLine();
   }
   function refreshSettingsUI(){
@@ -1458,7 +1421,6 @@
     hideAllFlow();
     startOverlay.classList.remove('hidden');
     setHud(false);
-    refreshHeroSelect();
     refreshCommuteLine();
   }
   function showIntro(){
@@ -1687,7 +1649,6 @@
   function nextStage(){
     sfx('clear');
     if(stage === 1) track('stage1Clears');
-    if(stage >= 5) localStorage.setItem(LS.unlockVice, '1');
     state = 'settle';
     const gained = Math.max(0, gold - goldAtStageStart);
     settleTitle.textContent = 'STAGE ' + String(stage).padStart(2,'0') + ' CLEAR';
@@ -1716,19 +1677,19 @@
         buyCompanionBtn.textContent = RAMBO_REVIVE_COST + 'G 구매';
         buyCompanionBtn.disabled = gold < RAMBO_REVIVE_COST;
       } else if(companionInterval < COMPANION_BASE_INTERVAL){
-        companionItemName.textContent = '부회장 복귀';
-        companionItemDesc.textContent = '쓰러진 부회장을 다시 배치합니다 (기존 공격속도 업그레이드 단계 유지)';
+        companionItemName.textContent = '위원 복귀';
+        companionItemDesc.textContent = '쓰러진 위원을 다시 배치합니다 (기존 공격속도 업그레이드 단계 유지)';
         buyCompanionBtn.textContent = COMPANION_COST + 'G 구매';
         buyCompanionBtn.disabled = gold < COMPANION_COST;
       } else {
-        companionItemName.textContent = '부회장';
-        companionItemDesc.textContent = '학생회 부회장. 옆에서 0.5초마다 자동 사격';
+        companionItemName.textContent = '선도부 위원';
+        companionItemDesc.textContent = '선도부 위원. 옆에서 0.5초마다 자동 사격';
         buyCompanionBtn.textContent = COMPANION_COST + 'G 구매';
         buyCompanionBtn.disabled = gold < COMPANION_COST;
       }
     } else if(companionInterval > COMPANION_MIN_INTERVAL){
-      companionItemName.textContent = '부회장 업그레이드';
-      companionItemDesc.textContent = '부회장의 공격속도가 소폭 상승합니다';
+      companionItemName.textContent = '위원 업그레이드';
+      companionItemDesc.textContent = '위원의 공격속도가 소폭 상승합니다';
       buyCompanionBtn.textContent = COMPANION_UPGRADE_COST + 'G 구매';
       buyCompanionBtn.disabled = gold < COMPANION_UPGRADE_COST;
     } else if(!hasDrone){
@@ -2394,19 +2355,6 @@
     refreshSettingsUI();
   });
   document.getElementById('settingsCloseBtn').addEventListener('click', ()=>{ sfx('ui'); showTitle(); });
-  if(heroPresidentBtn) heroPresidentBtn.addEventListener('click', (e)=>{
-    e.stopPropagation();
-    sfx('ui');
-    localStorage.setItem(LS.hero, 'president');
-    refreshHeroSelect();
-  });
-  if(heroViceBtn) heroViceBtn.addEventListener('click', (e)=>{
-    e.stopPropagation();
-    if(!viceUnlocked()) return;
-    sfx('ui');
-    localStorage.setItem(LS.hero, 'vice');
-    refreshHeroSelect();
-  });
   if(watchAdBtn) watchAdBtn.addEventListener('click', (e)=>{ e.stopPropagation(); playRewardedAd(); });
   muteBtn.addEventListener('click', ()=>{
     muted = !muted;
@@ -2520,9 +2468,7 @@
       ctx.beginPath(); ctx.ellipse(px+10, groundY+3, 30, 7, 0, 0, Math.PI*2); ctx.fill();
       ctx.translate(kick, 0);
       let pose = SPR.player;
-      if(selectedHero() === 'vice' && sprOk('companion')){
-        pose = SPR.companion;
-      } else if(atkFrame >= 0 && SPR.playerAtk && sprOkFrame(SPR.playerAtk[atkFrame])){
+      if(atkFrame >= 0 && SPR.playerAtk && sprOkFrame(SPR.playerAtk[atkFrame])){
         pose = SPR.playerAtk[atkFrame];
       }
       drawSprite(pose, px + 8, groundY + 2, PLAYER_SPR.destH, PLAYER_SPR.ax);

@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>STOP THE TRAIN — 기획</title>
+<title>STOP THE TRAIN — 기획서 (통합본)</title>
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Noto+Sans+KR:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
   :root{
@@ -61,34 +61,46 @@
 </head>
 <body>
 <div class="hero"><div class="hero-inner">
-  <div class="tag">LANDSCAPE MOBILE · 16:9</div>
+  <div class="tag">LANDSCAPE MOBILE · 16:9 · 통합 기획서 v3 2026-09-18</div>
   <h1>STOP THE TRAIN</h1>
-  <p class="lead">등굣길을 들이받아 이세계로 보내는 열차를, 학생이 선로에서 막는다. 연타가 게임이다.</p>
+  <p class="lead">등굣길을 들이받아 이세계로 보내는 열차를, 선로에 선 선도부가 막는다. 연타가 게임이다.</p>
   <p class="links"><a href="https://psh10004okpro.github.io/stop-the-train/">플레이</a> · <a href="https://psh10004okpro.github.io/stop-the-train/concept/">UI 보드</a></p>
 </div></div>
 
 <div class="wrap">
-  <p class="muted">이 문서는 글로만 설명하지 않는다. 지금 있는 화면과 시안으로 읽는다. 가로 모바일 16:9가 기준이다.</p>
+  <p class="muted">이 문서는 흩어져 있던 세계관·플로우·UI 콘셉트·런칭 문서를 하나로 묶은 통합본 v3다. v2 대비 캐릭터가 선도부로 리뉴얼됐고, 캐릭터 선택이 제거됐으며, 출근 용어가 근무로 바뀌었다. 글로만 설명하지 않는다. 지금 있는 화면과 시안으로 읽는다. 가로 모바일 16:9가 유일한 플레이 비율이다.</p>
   <ol class="toc">
+    <li><a href="#world">세계관 — 게임 규칙과 세계는 같다</a></li>
     <li><a href="#look">한 화면으로 보는 게임</a></li>
+    <li><a href="#flow">화면 흐름 — 플레이를 앞당긴다</a></li>
     <li><a href="#loop">한 판</a></li>
     <li><a href="#cast">누가 막나</a></li>
-    <li><a href="#hud">전투 HUD</a></li>
-    <li><a href="#meta">런 밖</a></li>
-    <li><a href="#shop">비품실</a></li>
-    <li><a href="#art">아트 두 갈래</a></li>
+    <li><a href="#hud">전투 HUD — 채택안 9</a></li>
+    <li><a href="#shop">비품실 — 성장 3축</a></li>
+    <li><a href="#meta">런 밖 — 내일 오게 하는 것</a></li>
+    <li><a href="#art">아트 — 선도부 리뉴얼 확정</a></li>
     <li><a href="#launch">시작에 성공하는 법</a></li>
+    <li><a href="#no">하지 않는 것</a></li>
   </ol>
 
-  <h2 id="look">1. 한 화면으로 보는 게임</h2>
+  <h2 id="world">1. 세계관 — 게임 규칙과 세계는 같다</h2>
+  <p>이세계 열차 vs 선도부. 시간표와 무관하게 학생을 들이받는 열차가 등장한다. 정체를 밝힐 수 없는 이 열차를, 유일하게 서 있는 선도부가 막는다.</p>
+  <ul>
+    <li><b>적</b> — 이세계 개체(좀비). 열차가 내리는 존재다. 몹만이 아니라 열차 자체가 적이다.</li>
+    <li><b>아군</b> — 플레이어는 선도부장(갈색 교복, 노란 완장, 등에 체육판). 옆에서 쏘는 동료는 선도부 위원. 열차를 몸으로 막는 이는 체육부장이다.</li>
+    <li><b>원칙</b> — 주인공은 자리를 막는다. 이세계는 열차에서 이세계 개체로 온다. 들이받으면 게임오버다.</li>
+  </ul>
+  <p>세계관을 화면에 설명하지 않는다. 도입 3초 안에 열차를 보여 주고, 게임오버에 「열차 파괴」를 보인다. 설정·스토리 텍스트는 화면에 올리지 않는다.</p>
+
+  <h2 id="look">2. 한 화면으로 보는 게임</h2>
   <p>폰을 가로로 든다. 캐릭터는 왼쪽, 열차는 오른쪽. 화면을 두드리면 쏜다.</p>
   <div class="phone"><img class="wide" style="margin:0;border:0;border-radius:0" src="shots/play.png" alt="라이브 전투 화면"></div>
-  <p class="cap">라이브 전투. 16:9, 왼쪽 회장 · 오른쪽 열차 · HUD는 모서리만.</p>
+  <p class="cap">라이브 전투. 16:9, 왼쪽 선도부장 · 오른쪽 열차 · HUD는 모서리만.</p>
 
   <div class="grid2">
     <div>
       <img class="wide" src="shots/title.png" alt="타이틀">
-      <p class="cap">타이틀. 출근 줄, 회장/부회장, 시작.</p>
+      <p class="cap">타이틀. 근무 스트릭, 선도부장, 시작.</p>
     </div>
     <div>
       <img class="wide" src="shots/shop.png" alt="상점">
@@ -96,30 +108,63 @@
     </div>
   </div>
 
-  <h2 id="loop">2. 한 판</h2>
-  <div class="step"><div class="num">1</div><div><b>타이틀</b><p>오늘 출근했는지, 누구로 막을지. 시작을 누른다.</p></div></div>
-  <div class="step"><div class="num">2</div><div><b>첫 판 = 광고</b><p>1스테이지에 이세계 개체가 반드시 나온다. 광고에서 보여 준 것과 같아야 한다.</p></div></div>
-  <div class="step"><div class="num">3</div><div><b>연타</b><p>탭할 때마다 샷 소리와 진동. 열차가 몸에 닿으면 오버.</p></div></div>
-  <div class="step"><div class="num">4</div><div><b>비품실 → 다음 열차</b><p>막으면 골드로 산다. 들이받으면 그 판은 끝.</p></div></div>
+  <h2 id="flow">3. 화면 흐름 — 플레이를 앞당긴다</h2>
+  <p>재미는 연타·저지·콤보다. 플레이어가 어디서 막히는지 화면에 새긴다. 첫 판 안에 첫 클리어·첫 상점·다음 런이 이어지는 것이 핵심이다.</p>
+  <div class="step"><div class="num">1</div><div><b>현재</b><p>타이틀 → 튜토리얼(3초) → 클리어 1회 → 상점 → 다음 스테이지.</p></div></div>
+  <div class="step"><div class="num">2</div><div><b>목표</b><p>스플래시 → 타이틀 → 튜토리얼(첫 판) → 튜토리얼 없는 플레이 → 클리어 카드 → 비품실 → 스테이지 반복.</p></div></div>
+  <p>첫 진입과 재플레이 사이가 <b>벽</b>이다. 튜토리얼은 첫 판 한 번만. 재도전은 플레이 직행이다.</p>
 
-  <h2 id="cast">3. 누가 막나</h2>
-  <div class="grid3">
-    <div class="card">
-      <img src="../train_stopper_assets/hero_front.png" alt="회장" style="height:260px;object-fit:contain;">
-      <div class="t"><span class="st ok">라이브</span><br><b>학생회장</b> — 플레이어. 권총. 자리를 지킨다.</div>
+  <div class="grid2">
+    <div>
+      <div class="card"><div class="t">
+        <b>전투 → 플레이</b><p>타이틀에서 탄창을 장전하듯 화면을 두드리면 전투로. HUD는 위치를 그대로 가져가서 눈을 옮기지 않는다.</p>
+      </div></div>
+      <div class="card"><div class="t"><b>패배 → 재개</b><p>체력 0이면 곧바로 열차 파괴. 0.8초 폭발로 「게임오버」가 올라온다.</p></div></div>
+      <div class="card"><div class="t"><b>돈화 → 정산·상점</b><p>정산 후 다음 열차까지 골드를 쓰는 유일한 시간. 모든 성장과 해금은 여기서 이뤄진다.</p></div></div>
+      <div class="card"><div class="t"><b>게임오버 → 재개</b><p>「다시 시작」으로 즉시 재개, 0.6초 반응. 자리에서 다시 막는다.</p></div></div>
     </div>
-    <div class="card">
-      <img src="../train_stopper_assets/companion_front.png" alt="부회장" style="height:260px;object-fit:contain;">
-      <div class="t"><span class="st ok">라이브</span><br><b>부회장</b> — 상점 동료. 5스테이지면 플레이어로 해금.</div>
-    </div>
-    <div class="card">
-      <img src="shots/seondo.png" alt="선도부 시안" style="height:260px;object-fit:contain;background:#7a7e8a;">
-      <div class="t"><span class="st wait">시안</span><br><b>선도부</b> — 갈색 교복, 노란 완장. 아직 인게임이 아니다.</div>
+    <div>
+      <img class="wide" src="../flow_doc_assets/02_splash.jpg" alt="스플래시">
+      <p class="cap">스플래시 1.8초, 스킵 없음. 밤 선로에 로고를 겹친다.</p>
+      <img class="wide" src="../flow_doc_assets/04_intro.jpg" alt="인트로">
+      <p class="cap">인트로 3초. 자막: SPACE로 연타하라. 설명 화면을 따로 두지 않는다.</p>
     </div>
   </div>
-  <p>체육부장은 상점에서 산다. 열차를 몸으로 1초 막는다.</p>
 
-  <h2 id="hud">4. 전투 HUD — 채택안 9</h2>
+  <table>
+    <tr><th>화면</th><th>필수</th><th>넣지 않을 것</th></tr>
+    <tr><td>스플래시</td><td>로고 1.8초</td><td>버튼, 시작 안내</td></tr>
+    <tr><td>타이틀</td><td>시작 / 기록 / 설정</td><td>큰 테스트 버튼, 히든 튜토리얼</td></tr>
+    <tr><td>플레이 HUD</td><td>스테이지, HP, 거리, 골드, 탄약, 콤보</td><td>스토리 텍스트, 미니맵</td></tr>
+    <tr><td>클리어 카드</td><td>골드, 거리, 콤보</td><td>스테이지 진행도 미리보기</td></tr>
+    <tr><td>비품실</td><td>3축 + 재장전</td><td>가격 없는 아이템 슬롯 획득 연출</td></tr>
+    <tr><td>게임오버</td><td>파괴 연출, 최고 거리, 골드, 파괴 수</td><td>보상 대기 연출</td></tr>
+  </table>
+
+  <h2 id="loop">4. 한 판</h2>
+  <div class="step"><div class="num">1</div><div><b>타이틀</b><p>오늘 근무했는지, 시작을 누른다. 캐릭터 고르기는 없다 — 주인공은 선도부장 한 명이다.</p></div></div>
+  <div class="step"><div class="num">2</div><div><b>첫 판 = 광고</b><p>1스테이지에 이세계 개체가 반드시 나온다. 광고에서 보여 준 것과 같아야 한다.</p></div></div>
+  <div class="step"><div class="num">3</div><div><b>연타</b><p>탭할 때마다 샷 소리와 진동. 열차가 몸에 닿으면 오버.</p></div></div>
+  <div class="step"><div class="num">4</div><div><b>비품실 → 다음 열차</b><p>막으면 골드로 산다. 들이받으면 그 판은 끝. 스테이지는 무한히 이어진다.</p></div></div>
+
+  <h2 id="cast">5. 누가 막나</h2>
+  <div class="grid3">
+    <div class="card">
+      <img src="../train_stopper_assets/hero_front.png" alt="선도부장" style="height:260px;object-fit:contain;">
+      <div class="t"><span class="st ok">라이브</span><br><b>선도부장</b> — 플레이어. 갈색 교복, 노란 완장, 등에 체육판. 권총. 자리를 지킨다.</div>
+    </div>
+    <div class="card">
+      <img src="../train_stopper_assets/companion_front.png" alt="선도부 위원" style="height:260px;object-fit:contain;">
+      <div class="t"><span class="st ok">라이브</span><br><b>선도부 위원</b> — 상점 동료. 안경·완장. 옆에서 자동 사격.</div>
+    </div>
+    <div class="card">
+      <img src="shots/seondo.png" alt="선도부 리뉴얼" style="height:260px;object-fit:contain;background:#7a7e8a;">
+      <div class="t"><span class="st ok">리뉴얼</span><br><b>캐릭터 교체 완료</b> — 학생회장·부회장 삭제, 선도부로 디자인 리뉴얼. 캐릭터 선택 UI도 제거했다.</div>
+    </div>
+  </div>
+  <p>체육부장은 상점에서 산다. 열차를 몸으로 1초 막는다. 리뉴얼 아트는 Elice 파이프라인(tools/elice_seondo_sprites.mjs → pack_seondo_art.py)으로 만들었다.</p>
+
+  <h2 id="hud">6. 전투 HUD — 채택안 9</h2>
   <p>일러스트 아이콘. 글자는 판 위에 HTML로 올린다.</p>
   <img class="wide" src="../concept/play_09_icons.jpg" alt="컨셉 9 전투">
   <p class="cap">사이드뷰 전투 시안. 라이브 HUD의 기준.</p>
@@ -134,36 +179,46 @@
   <img class="wide" src="../concept/kit_09_icons.jpg" alt="키트 전체">
   <p class="cap">키트 시트. 하트·탄피·금화·장갑·열차.</p>
 
-  <h2 id="meta">5. 런 밖 — 내일 오게 하는 것</h2>
-  <div class="grid2">
-    <div class="card">
-      <div class="t">
-        <b>내일 출근</b>
-        <p>오늘 첫 런에서 출근을 찍는다. 이어지면 스트릭, 골드 보너스(최대 50G). 타이틀 위에 줄로 보여 준다. 하이점수만으로는 내일 안 온다.</p>
-      </div>
-    </div>
-    <div class="card">
-      <div class="t">
-        <b>부회장 해금</b>
-        <p>5스테이지를 막으면 타이틀에서 부회장을 고를 수 있다. 런 밖의 목표다.</p>
-      </div>
-    </div>
-  </div>
-
-  <h2 id="shop">6. 비품실</h2>
+  <h2 id="shop">7. 비품실 — 성장 3축</h2>
   <img class="wide" src="shots/shop.png" alt="상점 라이브">
   <p class="cap">라이브 상점. 초록이 구매, 빨강이 광고·다음 열차.</p>
+  <p>비품실은 골드가 모이는 유일한 시간이다. 성장은 <b>무기 / 동료 / 체육부장</b> 3축 + 재장전으로 이루어지며, 각 축은 단계별로 이어진다. 아래는 라이브 구현 기준 가격이다.</p>
   <table>
-    <tr><th>항목</th><th>가격</th><th>하는 일</th></tr>
-    <tr><td>부회장</td><td>60G</td><td>옆에서 자동 사격</td></tr>
-    <tr><td>매그넘</td><td>90G</td><td>넉백·데미지</td></tr>
-    <tr><td>체육부장</td><td>60G</td><td>1초 저지</td></tr>
-    <tr><td>체육부장 강화 / 재장전</td><td>30G</td><td>저지·재장전</td></tr>
+    <tr><th>축</th><th>단계</th><th>가격</th><th>하는 일</th></tr>
+    <tr><td rowspan="4">무기</td><td>라이플</td><td>90G</td><td>클릭당 2발. 데미지·넉백 업</td></tr>
+    <tr><td>미니건</td><td>210G</td><td>클릭당 3발, 장탄수 100. 재장전 3배 느림, 발당 데미지 절반</td></tr>
+    <tr><td>터렛</td><td>240G</td><td>4클릭당 1발, 고정 데미지 170, 넉백 6배. 연사 제한 없음</td></tr>
+    <tr><td>스나이퍼</td><td>300G</td><td>터렛 상위. 정밀 고정 데미지</td></tr>
+    <tr><td rowspan="4">동료</td><td>선도부 위원</td><td>60G</td><td>옆에서 0.5초마다 자동 사격</td></tr>
+    <tr><td>위원 업그레이드</td><td>60G</td><td>공격속도 상승 (최속 70ms, 반복 구매)</td></tr>
+    <tr><td>드론</td><td>120G</td><td>머리 위 호버링, 유도미사일. 넉백은 매그넘의 3배</td></tr>
+    <tr><td>람보</td><td>270G (부활 90G)</td><td>M60 기관총, 동료 최속의 2배 연사. 좀비 3회 타격에 쓰러짐(체력바)</td></tr>
+    <tr><td rowspan="3">체육부장</td><td>체육부장</td><td>60G (재구매 30G)</td><td>열차를 몸으로 저지. 저지 시 열차 감속 + 버팀</td></tr>
+    <tr><td>체육부장 강화</td><td>30G</td><td>감속량 강화, 버팀 0.2초 증가</td></tr>
+    <tr><td>전사 (최종)</td><td>270G</td><td>칼 스윙으로 개체 처치 + 매 스윙 열차 고정 50 데미지, 감속 0.04, 버팀 4초</td></tr>
+    <tr><td rowspan="2">보조</td><td>재장전 강화</td><td>30G</td><td>모든 무기의 재장전 속도 향상 (미니건은 별도 3단, 30G)</td></tr>
     <tr><td>광고 스텁</td><td>—</td><td>+60G. 승패 스탯은 광고로 안 산다</td></tr>
   </table>
 
-  <h2 id="art">7. 아트 두 갈래</h2>
-  <p>지금은 검은 교복 회장 + 아이콘 HUD로 라이브다. 선도부 플랫 시안은 아직 안 넣었다. 갈아타면 HUD도 아래 키트 중 하나로 맞춘다.</p>
+  <h2 id="meta">8. 런 밖 — 내일 오게 하는 것</h2>
+  <div class="grid2">
+    <div class="card">
+      <div class="t">
+        <b>내일 근무</b>
+        <p>오늘 첫 런에서 근무를 찍는다. 이어지면 스트릭, 골드 보너스(스트릭×10G, 최대 50G). 타이틀에 줄로 보여 준다 — 「오늘 근무 · 스트릭 n일 · 내일도 근무」. 하이점수만으로는 내일 안 온다.</p>
+      </div>
+    </div>
+    <div class="card">
+      <div class="t">
+        <b>런 밖 목표는 비품실</b>
+        <p>캐릭터 해금은 없다. 성장은 전부 비품실 3축(무기·동료·체육부장)으로 이루어진다.</p>
+      </div>
+    </div>
+  </div>
+  <p class="muted">저장은 localStorage — 최고 거리, 골드, 근무 스트릭, 화면 설정, 마지막 화면. 백엔드 없이 동작한다.</p>
+
+  <h2 id="art">9. 아트 — 선도부 리뉴얼 확정</h2>
+  <p>지금은 갈색 교복 선도부장 + 아이콘 HUD로 라이브다. 학생회장·부회장은 삭제했고, 캐릭터 선택 UI도 제거했다. 세계는 밤 남도 인도 시티 + 팬텀 열차, 선도부의 갈색·노랑이 포인트 컬러다. 선도부 전용 키트(완장·학생증·플랫 라인·경고장) 중 하나로 HUD를 맞추는 것은 다음 단계다.</p>
   <div class="grid2">
     <div>
       <img class="wide" src="../concept/seondo_play_03_flatline.jpg" alt="선도 플랫 전투">
@@ -171,17 +226,17 @@
     </div>
     <div>
       <img class="wide" src="../concept/seondo_kit_03_flatline.jpg" alt="선도 플랫 키트">
-      <p class="cap">갈색·노랑·빨강 플랫 라인 키트.</p>
+      <p class="cap">선도부 리뉴얼 키트 후보. 갈색·노랑·빨강 플랫 라인.</p>
     </div>
   </div>
-  <p>선도부 UI 후보는 완장 / 학생증 / 플랫 라인 / 경고장 / 칠판 / 안경·문방구. 보드에서 13~18.</p>
+  <p>UI 콘셉트 후보는 총 18안이다 — 1~12는 공통 키트(글래스·티켓·네온·플랫·택티컬·골드·학생회·화려한 장식·일러스트 아이콘·리본·유화 엠블럼·스티커), 13~18은 선도부 전용(완장·학생증·플랫 라인·경고장·칠판·안경·문방구). 채택안은 9(일러스트 아이콘). 전체 보드는 <a href="https://psh10004okpro.github.io/stop-the-train/concept/">UI 보드</a>에서 본다.</p>
 
-  <h2 id="launch">8. 시작에 성공하는 법</h2>
+  <h2 id="launch">10. 시작에 성공하는 법</h2>
   <p>웹 광고형이다. 설치 유도 광고와 첫 판이 다르면 바로 죽는다. 숫자 없이 유저를 사지 않는다.</p>
 
   <div class="step"><div class="num">1</div><div>
     <b>광고 = 첫 판</b>
-    <p>크리에이티브에 넣는 것은 실제 1스테이지다. 회장이 왼쪽, 열차가 오른쪽, 개체가 내린다. 22스테이지 보스나 상점 풀세트를 광고에 넣지 않는다.</p>
+    <p>크리에이티브에 넣는 것은 실제 1스테이지다. 선도부장이 왼쪽, 열차가 오른쪽, 개체가 내린다. 후반 스테이지 보스나 상점 풀세트를 광고에 넣지 않는다.</p>
   </div></div>
   <div class="step"><div class="num">2</div><div>
     <b>첫 10초에 위협</b>
@@ -192,8 +247,8 @@
     <p>탭마다 샷과 진동. 무음이면 버튼 연타일 뿐이다. 사운드 켜진 상태에서 첫 판을 돌린다.</p>
   </div></div>
   <div class="step"><div class="num">4</div><div>
-    <b>내일 출근을 타이틀에</b>
-    <p>첫 클리어 뒤 타이틀에 「내일도 출근」이 보여야 한다. 하이점수 숫자만 있으면 D1이 안 나온다.</p>
+    <b>내일 근무를 타이틀에</b>
+    <p>첫 클리어 뒤 타이틀에 「내일도 근무」가 보여야 한다. 하이점수 숫자만 있으면 D1이 안 나온다.</p>
   </div></div>
   <div class="step"><div class="num">5</div><div>
     <b>채널 하나 — 웹</b>
@@ -201,26 +256,29 @@
   </div></div>
   <div class="step"><div class="num">6</div><div>
     <b>숫자 없이 UA 금지</b>
-    <p>설정에 이미 있다: 방문, 1스테이지 시작, 클리어율, D1. 1스테이지 클리어가 안 나오면 광고를 끄고 첫 판을 고친다. D1이 안 나오면 출근 보상을 고친다. 그 다음에만 예산을 넣는다.</p>
+    <p>설정에 이미 있다: 방문, 1스테이지 시작, 클리어율, D1. 1스테이지 클리어가 안 나오면 광고를 끄고 첫 판을 고친다. D1이 안 나오면 근무 보상을 고친다. 그 다음에만 예산을 넣는다.</p>
   </div></div>
   <div class="step"><div class="num">7</div><div>
     <b>작은 불로 먼저</b>
     <p>소액·짧은 기간만 태운다. 크리에이티브는 라이브 화면을 캡처한다. 시안 일러스트로 광고하지 않는다.</p>
   </div></div>
   <div class="step"><div class="num">8</div><div>
-    <b>아트 갈아타기는 나중</b>
-    <p>선도부 시안은  captivating하지만, 첫 성공 조건(클리어율·D1)을 검은 회장 빌드로 먼저 본다. 숫자가 나온 뒤에 캐릭터를 바꿀지 정한다.</p>
+    <b>아트 리뉴얼은 완료, UI 키트 교체가 다음</b>
+    <p>캐릭터는 선도부로 교체됐다. 남은 것은 HUD를 선도부 전용 키트(13~16안) 중 하나로 맞추는 일이다. 다만 첫 성공 조건(클리어율·D1)을 먼저 본다. 숫자가 나온 뒤에 HUD를 바꾼다.</p>
   </div></div>
 
-  <h2>하지 않는 것</h2>
+  <h2 id="no">하지 않는 것</h2>
   <ul>
     <li>스팀과 웹을 동시에 밀기</li>
     <li>광고로 무적·스테이지 스킵·승패 스탯 판매</li>
     <li>주인공이 뛰어다니는 액션으로 장르 바꾸기</li>
     <li>측정 전에 예산을 태우기</li>
+    <li>로고 없이 STOP THE TRAIN 타이틀을 크게 보여 주기</li>
+    <li>클리어 후 스테이지 진행도 예고로 다음을 예측하게 하기</li>
+    <li>인트로에서도 게임 규칙을 어기기</li>
   </ul>
 
-  <p class="muted">라이브 화면은 이 빌드에서 찍었다. 시안 이미지는 선정 전까지 후보다. 가로 16:9가 유일한 플레이 비율이다.</p>
+  <p class="muted">라이브 화면은 선도부 리뉴얼 빌드에서 찍었다(plan/shots 3종 교체 완료). 구 캐릭터(학생회장·부회장) 에셋은 train_stopper_assets/_backup_council에 보관한다. 가로 16:9가 유일한 플레이 비율이다. 이 문서가 기획·디자인의 단일 기준이다.</p>
 </div>
 </body>
 </html>
