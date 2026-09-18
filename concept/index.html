@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>STOP THE TRAIN — 사이드뷰 전투 · UI</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Noto+Sans+KR:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#090b12;
+    --ink:#f3ead8;
+    --soft:#b7c0d4;
+    --gold:#c9a45c;
+    --line:#2a3148;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:var(--bg);
+    color:var(--ink);
+    font-family:"Noto Sans KR",sans-serif;
+    line-height:1.7;
+  }
+  .wrap{ max-width:1080px; margin:0 auto; padding:40px 20px 96px; }
+  .tag{ color:var(--gold); font-weight:700; letter-spacing:.12em; font-size:12px; }
+  h1{
+    font-family:Cinzel,serif;
+    letter-spacing:.14em;
+    font-size:28px;
+    margin:8px 0 12px;
+  }
+  .lead{ color:var(--soft); max-width:720px; }
+  h2{
+    font-size:18px;
+    margin:48px 0 6px;
+    color:var(--gold);
+    letter-spacing:.04em;
+  }
+  .cap{ font-size:13px; color:#8e97ad; margin:0 0 12px; }
+  .shot{
+    width:100%;
+    aspect-ratio:16/9;
+    object-fit:cover;
+    border:1px solid var(--line);
+    border-radius:10px;
+    display:block;
+    margin:0 0 12px;
+    background:#05080a;
+  }
+  .pair{ display:grid; gap:12px; }
+  @media (min-width:800px){
+    .pair{ grid-template-columns:1fr 1fr; align-items:start; }
+  }
+  .pair .shot:first-child{ grid-column:1 / -1; }
+  footer{ margin-top:56px; color:#8e97ad; font-size:13px; }
+  a{ color:var(--gold); }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="tag">STOP THE TRAIN · LANDSCAPE 16:9</div>
+  <h1>COMBAT UI CONCEPTS</h1>
+  <p class="lead">사이드뷰 전투 화면입니다. 캐릭터는 왼쪽, 열차는 오른쪽, HUD는 좌상 스탯 · 우상 연타 · 하단 힌트입니다. 각 안은 같은 배치에 UI 키트만 다릅니다. 글자는 이미지에 넣지 않았습니다.</p>
+
+  <h2>1. 유리</h2>
+  <p class="cap">반투명 남색 유리, 얇은 금 테두리.</p>
+  <div class="pair">
+    <img class="shot" src="play_01_glass.jpg" alt="전투 1 유리">
+    <img class="shot" src="kit_01_glass.jpg" alt="키트 1 유리">
+  </div>
+
+  <h2>2. 승차권</h2>
+  <p class="cap">크림 티켓, 절취선, 남색 아웃라인.</p>
+  <div class="pair">
+    <img class="shot" src="play_02_ticket.jpg" alt="전투 2 승차권">
+    <img class="shot" src="kit_02_ticket.jpg" alt="키트 2 승차권">
+  </div>
+
+  <h2>3. 네온</h2>
+  <p class="cap">홀로그램 시안 라인 HUD.</p>
+  <div class="pair">
+    <img class="shot" src="play_03_neon.jpg" alt="전투 3 네온">
+    <img class="shot" src="kit_03_neon.jpg" alt="키트 3 네온">
+  </div>
+
+  <h2>4. 플랫</h2>
+  <p class="cap">흰 카드, 검은 선. 낮 철교.</p>
+  <div class="pair">
+    <img class="shot" src="play_04_flat.jpg" alt="전투 4 플랫">
+    <img class="shot" src="kit_06_flat.jpg" alt="키트 4 플랫">
+  </div>
+
+  <h2>5. 전술</h2>
+  <p class="cap">올리브 와이어프레임, 화물 조차장.</p>
+  <div class="pair">
+    <img class="shot" src="play_05_tactical.jpg" alt="전투 5 전술">
+    <img class="shot" src="kit_04_tactical.jpg" alt="키트 5 전술">
+  </div>
+
+  <h2>6. 금 유리</h2>
+  <p class="cap">남색 필리그리. 현재 인게임에 가장 가깝습니다.</p>
+  <div class="pair">
+    <img class="shot" src="play_06_gold.jpg" alt="전투 6 금 유리">
+    <img class="shot" src="kit_05_gold.jpg" alt="키트 6 금 유리">
+  </div>
+
+  <footer>
+    STOP THE TRAIN · 사이드뷰 전투 컨셉 ·
+    <a href="https://psh10004okpro.github.io/stop-the-train/">플레이</a>
+  </footer>
+</div>
+</body>
+</html>
