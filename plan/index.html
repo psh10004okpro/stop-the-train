@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>STOP THE TRAIN — 기획서</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Noto+Sans+KR:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{ --bg:#090b12; --ink:#f3ead8; --soft:#b7c0d4; --gold:#c9a45c; --line:#2a3148; --card:#141824; }
+  *{box-sizing:border-box;}
+  body{ margin:0; background:var(--bg); color:var(--ink); font-family:"Noto Sans KR",sans-serif; line-height:1.75; }
+  .wrap{ max-width:840px; margin:0 auto; padding:40px 20px 96px; }
+  .tag{ color:var(--gold); font-weight:700; letter-spacing:.12em; font-size:12px; }
+  h1{ font-family:Cinzel,serif; letter-spacing:.12em; font-size:28px; margin:8px 0 10px; }
+  h2{ font-size:18px; color:var(--gold); margin:36px 0 10px; }
+  h3{ font-size:15px; margin:18px 0 6px; }
+  p,li{ color:var(--soft); }
+  a{ color:var(--gold); }
+  .lead{ font-size:16px; color:var(--ink); }
+  table{ width:100%; border-collapse:collapse; font-size:14px; }
+  th,td{ border:1px solid var(--line); padding:8px 10px; text-align:left; vertical-align:top; }
+  th{ color:var(--gold); font-weight:600; background:#10141f; }
+  .card{ background:var(--card); border:1px solid var(--line); border-radius:8px; padding:14px 16px; margin:10px 0; }
+  .links a{ display:inline-block; margin-right:16px; margin-top:8px; }
+  .muted{ color:#8e97ad; font-size:13px; }
+  ul{ padding-left:1.2em; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="tag">STOP THE TRAIN · 기획서</div>
+  <h1>PLAN</h1>
+  <p class="lead">등굣길을 들이받아 이세계로 보내는 열차를, 학생회가 선로에서 막는다.</p>
+  <p class="muted">웹 광고형 하이브리드 캐주얼 · 가로 16:9 · 2026-09-18 기준</p>
+  <p class="links">
+    <a href="https://psh10004okpro.github.io/stop-the-train/">플레이</a>
+    <a href="https://psh10004okpro.github.io/stop-the-train/concept/">전투 UI 컨셉</a>
+  </p>
+
+  <h2>1. 한 줄</h2>
+  <p>사이드뷰 연타 디펜스. 주인공은 자리를 지키고, 열차와 이세계 개체만 다가온다. 들이받으면 게임오버.</p>
+
+  <h2>2. 세계관</h2>
+  <div class="card">
+    <p>시간표에 없는 열차가 학생을 들이받는다. 맞은 사람은 이세계로 사라진다. 차체에서 이세계 개체가 내린다. 막으면 다음 열차가 온다.</p>
+    <p>막기 위해 학생회 임원이 선로에 선다. 플레이어는 회장, 옆에서 쏘는 동료는 부회장, 열차를 몸으로 막는 이는 체육부장이다.</p>
+  </div>
+
+  <h2>3. 캐릭터</h2>
+  <table>
+    <tr><th>역할</th><th>내용</th></tr>
+    <tr><td>학생회장</td><td>플레이어. 인식표, 권총. 타이틀에서 기본 선택.</td></tr>
+    <tr><td>부회장</td><td>빨간 완장. 런 중 상점 동료(자동 사격). 최고 5스테이지 클리어 시 타이틀에서 플레이어로 선택 가능.</td></tr>
+    <tr><td>체육부장</td><td>열차를 몸으로 막아 속도를 줄인다. 일회성. 상점에서 구매·강화.</td></tr>
+  </table>
+
+  <h2>4. 전투</h2>
+  <ul>
+    <li>가로 16:9. 캐릭터는 왼쪽, 열차는 오른쪽에서 접근.</li>
+    <li>조작은 화면 연타(또는 스페이스). 연타에 샷 사운드와 햅틱을 묶는다.</li>
+    <li>HUD: 좌상 스테이지·체력·거리·골드·탄약, 우상 연타, 하단 힌트.</li>
+    <li>1스테이지는 이세계 개체(좀비)가 반드시 나온다. 광고와 첫 판이 같아야 한다.</li>
+    <li>스테이지를 막으면 비품실 → 다음 열차.</li>
+  </ul>
+
+  <h2>5. 런 밖</h2>
+  <ul>
+    <li><b>내일 출근</b> — 오늘 첫 런에서 출근 스트릭을 기록한다. 이어지면 골드 보너스(최대 50G). 하이점수만으로는 재방문이 안 되므로 타이틀에 둔다.</li>
+    <li><b>캐릭터 해금</b> — 5스테이지 클리어 시 부회장. 타이틀에서 회장/부회장 선택.</li>
+  </ul>
+
+  <h2>6. 상점 · 광고</h2>
+  <table>
+    <tr><th>항목</th><th>가격</th><th>효과</th></tr>
+    <tr><td>부회장</td><td>60G</td><td>0.5초마다 자동 사격. 재구매로 간격 단축.</td></tr>
+    <tr><td>매그넘 권총</td><td>90G</td><td>넉백 3.9배, 데미지 1.65배.</td></tr>
+    <tr><td>체육부장</td><td>60G / 재구매 30G</td><td>1초 저지, 일회성.</td></tr>
+    <tr><td>체육부장 강화</td><td>30G</td><td>감속 강화, 지속 +0.2초.</td></tr>
+    <tr><td>재장전 속도</td><td>30G</td><td>모든 무기 재장전 단축.</td></tr>
+    <tr><td>광고 (스텁)</td><td>—</td><td>2초 뒤 +60G.</td></tr>
+  </table>
+  <p>문구: 「웹 플레이 · 승패 스탯은 광고로 살 수 없습니다.」 광고로 스테이지를 건너뛰거나 무적을 사지 않는다.</p>
+
+  <h2>7. 채널 · 측정</h2>
+  <ul>
+    <li><b>채널은 웹 하나.</b> 스팀 저가와 병행하지 않는다. 둘 다 하면 둘 다 약해진다.</li>
+    <li><b>측정 없이 UA 금지.</b> 설정에 방문, 1스테이지 시작·클리어율, D1 복귀를 둔다.</li>
+  </ul>
+
+  <h2>8. 화면</h2>
+  <p>플레이 창은 가로 16:9 (최대 1920×1080). 모바일은 가로 모드를 기준으로 한다.</p>
+
+  <h2>9. UI 컨셉 (미선정)</h2>
+  <p>사이드뷰 전투 기준으로 12안을 그려 두었다. 아직 하나를 고르지 않았다. 상세는 <a href="https://psh10004okpro.github.io/stop-the-train/concept/">전투 UI 컨셉</a>.</p>
+  <table>
+    <tr><th>#</th><th>안</th><th>메모</th></tr>
+    <tr><td>1</td><td>유리</td><td>반투명 남색+금</td></tr>
+    <tr><td>2</td><td>승차권</td><td>절취선 티켓</td></tr>
+    <tr><td>3</td><td>네온</td><td>홀로그램 시안</td></tr>
+    <tr><td>4</td><td>플랫</td><td>흰 카드, 검은 선</td></tr>
+    <tr><td>5</td><td>전술</td><td>올리브 프레임</td></tr>
+    <tr><td>6</td><td>금 유리</td><td>현재 인게임에 가장 가까움</td></tr>
+    <tr><td>7</td><td>학생회</td><td>교표·완장·수첩</td></tr>
+    <tr><td>8</td><td>화려한 보석</td><td>보석 아이콘, 두꺼운 금</td></tr>
+    <tr><td>9</td><td>일러스트 아이콘</td><td>하트·탄피·장갑·열차</td></tr>
+    <tr><td>10</td><td>리본·인장</td><td>학원 리본, 밀랍</td></tr>
+    <tr><td>11</td><td>에나멜 뱃지</td><td>동아리 배지</td></tr>
+    <tr><td>12</td><td>스티커 수첩</td><td>마스킹테이프, 폴라로이드</td></tr>
+  </table>
+
+  <h2>10. 열린 결정</h2>
+  <ul>
+    <li>전투 UI 키트 1~12 중 채택.</li>
+    <li>채택 후 홈·상점·오버·광고 판을 그 키트로 다시 맞출 것.</li>
+    <li>실제 광고 SDK는 스텁(+60G) 이후.</li>
+    <li>방문·1스테이지 클리어율·D1이 나오기 전에는 UA를 쓰지 않음.</li>
+  </ul>
+
+  <p class="muted">이 문서는 현재 빌드와 합의된 결정만 적는다. 컨셉 이미지는 선정 전까지 참고다.</p>
+</div>
+</body>
+</html>
