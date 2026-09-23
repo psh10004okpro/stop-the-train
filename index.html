@@ -4,6 +4,10 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>STOP THE TRAIN</title>
+<!-- Analytics collector: POST endpoint that receives one JSON event per request
+     (text/plain body, sent with sendBeacon). Empty = server send off, local counters only.
+     If a GA4 gtag snippet is on the page, the same events also go to gtag. -->
+<meta name="stt-analytics" content="">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=Noto+Sans+KR:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
@@ -16,6 +20,7 @@
     --flame: #e8c37a;
     --flame-hot: #f6ead0;
     --signal-red: #e35d6a;
+    --armband: #f5d000;
     --hud-line: rgba(201,164,92,0.35);
     --panel: rgba(12,14,24,0.78);
   }
@@ -97,7 +102,8 @@
   #distWrap{ width:200px; }
   #distFill{
     position:absolute; top:5px; right:10px; bottom:5px;
-    background: linear-gradient(90deg, #7a1212, #e03535);
+    /* distance reads in armband yellow so it never gets confused with the red train-HP bar */
+    background: linear-gradient(90deg, #a67c00, #f5d000);
     border-radius:2px;
   }
   .hud-text-row{
@@ -310,59 +316,6 @@
     justify-content:flex-start;
     padding-top: 20px;
   }
-  .hero-select{
-    display:flex; gap:14px; justify-content:center;
-    margin: 4px 0 10px;
-  }
-  button.hero-card{
-    width: 102px;
-    padding: 0 0 8px;
-    background: url('train_stopper_assets/ui_portrait_frame.png') center / 100% 100% no-repeat;
-    border: none;
-    border-radius: 0;
-    box-shadow: none;
-    display:flex; flex-direction:column; align-items:center;
-    color:#f6ead0;
-    cursor:pointer;
-    font-family:'Noto Sans KR', sans-serif;
-  }
-  button.hero-card.active{
-    background-image: url('train_stopper_assets/ui_portrait_frame_on.png');
-    filter:none;
-    outline:none;
-  }
-  button.hero-card.locked,
-  button.hero-card:disabled{
-    background-image: url('train_stopper_assets/ui_portrait_frame_lock.png');
-    cursor:default;
-    opacity:1;
-  }
-  .hero-portrait{
-    width: 72px; height: 92px;
-    margin-top: 14px;
-    overflow:hidden;
-    border-radius: 4px;
-    background: #12141c;
-  }
-  .hero-portrait img{
-    width:100%; height:100%;
-    object-fit:cover;
-    object-position: center 12%;
-    display:block;
-  }
-  button.hero-card.locked .hero-portrait img{
-    filter: grayscale(0.75) brightness(0.55);
-  }
-  .hero-name{
-    font-size:12px; font-weight:700;
-    margin-top: 6px;
-    text-shadow: 0 1px 6px #000;
-  }
-  .hero-lock{
-    font-size:10px; color:#e8c37a;
-    min-height: 14px;
-    letter-spacing: 0.04em;
-  }
   .commute-ticket{
     width: min(420px, 78vw);
     background: url('train_stopper_assets/ui_hud_row.png') center / 100% 100% no-repeat;
@@ -438,6 +391,21 @@
     font-size:28px; color: var(--flame-hot); font-weight:700; letter-spacing:0.16em;
   }
   .banner-text.sting{ color:#e8c37a; font-size:22px; letter-spacing:0.12em; }
+  .banner-sub{ font-size:16px; color: var(--signal-red); font-weight:700; letter-spacing:0.12em; margin-top:10px; }
+  .banner-sub.hidden{ display:none; }
+  #watchAdBtn:disabled{ opacity:0.45; cursor:not-allowed; }
+  /* 근무 수첩: records + permanent perks, laid out like the shop */
+  #recordsOverlay{ justify-content:flex-start; padding-top: 16px; }
+  #recordsOverlay h1{ font-size:18px; margin:0; text-align:left; }
+  #meritLine{
+    background: url('train_stopper_assets/ui_gold_plate.png') center / 100% 100% no-repeat;
+    padding: 12px 22px;
+    min-width: 140px;
+  }
+  #meritLine b{ color: var(--flame-hot); }
+  .notebook-records{ font-size:12px; color:#c5cbe0; margin: 0 0 12px; }
+  .notebook-records b{ color: var(--flame); }
+  #finalMerit{ color: var(--flame-hot); }
   .settle-card{
     width: min(520px, 92vw);
     background: url('train_stopper_assets/ui_over_panel.png') center / 100% 100% no-repeat;
@@ -488,7 +456,7 @@
 
   <div id="stageClear"><span class="pixel" id="stageClearText">STAGE CLEAR!</span></div>
 
-  <div id="hint" class="hidden pixel">이세계 열차를 막아라. SPACE 연타 (또는 탭)</div>
+  <div id="hint" class="hidden pixel">이세계 열차를 막아라. 화면 연타 (PC: SPACE)</div>
 
   <div class="overlay splash" id="splashOverlay">
     <img id="splashLogo" src="train_stopper_assets/hero_front.png" alt="">
@@ -500,11 +468,11 @@
         <h1 class="display-en">STOP THE TRAIN</h1>
         <div class="title-tag">등굣길을 들이받아 이세계로 보내는 열차</div>
       </div>
-      <div class="commute-ticket" id="commuteLine">내일 출근을 기록하세요</div>
+      <div class="commute-ticket" id="commuteLine">첫 근무 · 시작하면 공로 +3</div>
     </div>
     <div class="menu-col">
       <button class="arcade" id="startBtn">게임 시작</button>
-      <button class="arcade arcade-ghost" id="recordsBtn">최고 기록</button>
+      <button class="arcade arcade-ghost" id="recordsBtn">근무 수첩</button>
       <button class="arcade arcade-ghost" id="settingsBtn">설정</button>
     </div>
     <button class="arcade" id="testSkipBtn">30R TEST</button>
@@ -517,6 +485,7 @@
 
   <div class="overlay dim hidden" id="bannerOverlay">
     <div class="banner-text display-en" id="bannerText">STAGE 01</div>
+    <div class="banner-sub hidden" id="bannerSub">2량 편성 접근</div>
   </div>
 
   <div class="overlay dim hidden" id="stingOverlay">
@@ -531,7 +500,7 @@
         이번 연타: <b id="settleMash">0</b> 타/초<br>
         보유 골드: <b id="settleTotal">0</b>G
       </div>
-      <div class="skip-hint">탭하여 무기고</div>
+      <div class="skip-hint">탭하여 비품실</div>
     </div>
   </div>
 
@@ -542,7 +511,8 @@
         도달 스테이지: <b id="finalStage">1</b><br>
         최고 연타속도: <b id="finalCombo">0</b> 타/초<br>
         누적 골드: <b id="finalGold">0</b>G<br>
-        파괴한 열차: <b id="finalTrains">0</b>
+        파괴한 열차: <b id="finalTrains">0</b><br>
+        획득 공로: <b id="finalMerit">+0</b> (근무 수첩에서 영구 강화)
       </div>
     </div>
     <div class="menu-col">
@@ -552,15 +522,37 @@
   </div>
 
   <div class="overlay hidden" id="recordsOverlay">
-    <div class="records-card">
-      <h1>최고 기록</h1>
-      <div class="stat-list">
-        <div class="stat-row"><span>최고 스테이지</span><b id="recordStage">1</b></div>
-        <div class="stat-row"><span>최고 연타</span><b id="recordMash">0</b></div>
-        <div class="stat-row"><span>출근 스트릭</span><b id="recordStreak">1</b></div>
-        <div class="stat-row"><span>해금</span><b id="recordUnlock">선도부장</b></div>
+    <div class="shop-top">
+      <h1>근무 수첩</h1>
+      <div class="sub" id="meritLine">공로 <b id="recordMerit">0</b></div>
+    </div>
+    <div class="notebook-records">
+      최고 스테이지 <b id="recordStage">1</b> · 최고 연타 <b id="recordMash">0</b> · 근무 스트릭 <b id="recordStreak">0</b>일
+    </div>
+    <div class="shop-list">
+      <div class="shop-item">
+        <div class="shop-item-info">
+          <div class="shop-item-name pixel" id="perkFundName">비상금</div>
+          <div class="shop-item-desc" id="perkFundDesc"></div>
+        </div>
+        <button class="arcade shop-buy" id="perkFundBtn"></button>
+      </div>
+      <div class="shop-item">
+        <div class="shop-item-info">
+          <div class="shop-item-name pixel" id="perkDrillName">사격 훈련</div>
+          <div class="shop-item-desc" id="perkDrillDesc"></div>
+        </div>
+        <button class="arcade shop-buy" id="perkDrillBtn"></button>
+      </div>
+      <div class="shop-item">
+        <div class="shop-item-info">
+          <div class="shop-item-name pixel" id="perkBountyName">포상금</div>
+          <div class="shop-item-desc" id="perkBountyDesc"></div>
+        </div>
+        <button class="arcade shop-buy" id="perkBountyBtn"></button>
       </div>
     </div>
+    <div class="shop-footer pixel">공로는 판이 끝나도 남습니다 · 스테이지 클리어와 매일 근무로 모읍니다</div>
     <button class="arcade arcade-ghost" id="recordsCloseBtn">닫기</button>
   </div>
 
@@ -588,21 +580,21 @@
       <div class="shop-item">
         <div class="shop-item-info">
           <div class="shop-item-name pixel" id="companionItemName">선도부 위원</div>
-          <div class="shop-item-desc" id="companionItemDesc">선도부 위원. 옆에서 0.5초마다 자동 사격</div>
+          <div class="shop-item-desc" id="companionItemDesc">옆에서 0.5초마다 자동 사격</div>
         </div>
         <button class="arcade shop-buy" id="buyCompanionBtn">60G</button>
       </div>
       <div class="shop-item">
         <div class="shop-item-info">
           <div class="shop-item-name pixel" id="magnumItemName">매그넘 권총</div>
-          <div class="shop-item-desc" id="magnumItemDesc">넉백량 3.9배, 데미지 1.65배 증가</div>
+          <div class="shop-item-desc" id="magnumItemDesc">넉백량 3.9배, 데미지 1.65배 증가 (연사 제한 없음 · 2탭당 1발)</div>
         </div>
         <button class="arcade shop-buy" id="buyMagnumBtn">90G</button>
       </div>
       <div class="shop-item">
         <div class="shop-item-info">
           <div class="shop-item-name pixel">체육부장</div>
-          <div class="shop-item-desc">열차를 몸으로 막아 속도를 줄입니다 - 지속시간 1초, 일회성</div>
+          <div class="shop-item-desc">열차를 몸으로 막아 속도를 줄입니다 · 1초 저지, 일회성</div>
         </div>
         <button class="arcade shop-buy" id="buyShieldBtn">60G</button>
       </div>
@@ -621,7 +613,7 @@
         <button class="arcade shop-buy" id="buyReloadUpgradeBtn">30G</button>
       </div>
     </div>
-    <div class="shop-footer pixel">웹 플레이 · 승패 스탯은 광고로 살 수 없습니다</div>
+    <div class="shop-footer pixel">웹 플레이 · 승패 스탯은 광고로 살 수 없습니다 · 광고 보상은 비품실 1회당 1번</div>
     <button class="arcade arcade-ghost" id="watchAdBtn" style="margin-bottom:10px;width:min(420px,86vw);">광고 보고 +60G</button>
     <button class="arcade" id="shopContinueBtn">다음 열차</button>
   </div>
@@ -686,7 +678,10 @@
   const recordStageEl = document.getElementById('recordStage');
   const recordMashEl = document.getElementById('recordMash');
   const recordStreakEl = document.getElementById('recordStreak');
-  const recordUnlockEl = document.getElementById('recordUnlock');
+  const recordMeritEl = document.getElementById('recordMerit');
+  const recordsBtn = document.getElementById('recordsBtn');
+  const bannerSub = document.getElementById('bannerSub');
+  const finalMeritEl = document.getElementById('finalMerit');
   const commuteLineEl = document.getElementById('commuteLine');
   const metricsLineEl = document.getElementById('metricsLine');
   const watchAdBtn = document.getElementById('watchAdBtn');
@@ -846,7 +841,9 @@
     return !!(img && img.complete && img.naturalWidth > 1);
   }
   function loadTempArt(){
-    ['player','train','zombie','companion','civilian','shieldman'].forEach(n=>{
+    // shieldman → warrior → indomitable are the 체육부장 growth line; rambo replaces the
+    // companion at its top tier; drone/drone_up hover over the player
+    ['player','train','zombie','companion','civilian','shieldman','warrior','indomitable','rambo','drone','drone_up'].forEach(n=>{
       const img = new Image();
       img.src = ASSET_DIR + n + '.png';
       SPR[n] = img;
@@ -975,17 +972,30 @@
   let stage = 1;
   let trainMaxHP, trainHP, resistance, approachSpeed, dist;
 
-  // two-car trains: from stage 30, a second car trails the first, attached.
+  // two-car trains: a second car trails the first, attached.
   // hitting/knocking car 1 moves the whole train (car 2 just follows along).
-  // once car 1 is destroyed, car 2 (half its max HP) takes over on its own,
-  // faster and on fire, and must be destroyed to actually clear the round.
-  const SECOND_CAR_FIRST_STAGE = 30;
-  const SECOND_CAR_CHANCE = 0.5;      // per-round odds from stage 31 through 34
-  const SECOND_CAR_CHANCE_LATE = 0.7; // per-round odds from stage 35 onward
+  // once car 1 is destroyed, car 2 takes over on its own, faster and on fire,
+  // and must be destroyed to actually clear the round.
+  // every MILESTONE_EVERY-th stage (10, 20, 30...) is a guaranteed two-car milestone;
+  // from stage 21 two-car rounds also roll randomly.
+  const MILESTONE_EVERY = 10;
+  function isMilestone(n){ return n > 0 && n % MILESTONE_EVERY === 0; }
+  const SECOND_CAR_RANDOM_STAGE = 21;
+  const SECOND_CAR_CHANCE_EARLY = 0.3; // per-round odds from stage 21 through 30
+  const SECOND_CAR_CHANCE = 0.5;       // per-round odds from stage 31 through 34
+  const SECOND_CAR_CHANCE_LATE = 0.7;  // per-round odds from stage 35 onward
+  const SECOND_CAR_MID_STAGE = 31;
   const SECOND_CAR_LATE_STAGE = 35;
   function secondCarChance(n){
+    if(n < SECOND_CAR_RANDOM_STAGE) return 0;
+    if(n < SECOND_CAR_MID_STAGE) return SECOND_CAR_CHANCE_EARLY;
     return n >= SECOND_CAR_LATE_STAGE ? SECOND_CAR_CHANCE_LATE : SECOND_CAR_CHANCE;
   }
+  // car 2's HP as a share of car 1's: lighter before stage 30 so the stage-10/20
+  // milestones are a spike, not a wall
+  const SECOND_CAR_HP_RATIO_EARLY = 0.35;
+  const SECOND_CAR_HP_RATIO = 0.5;
+  const SECOND_CAR_FULL_HP_STAGE = 30;
   const SECOND_CAR_SPEED_MULT = 1.3;
   const WARNING_BLINK_MS = 420; // on/off duration of one "Warning" blink
   let stageHasSecondCar = false;
@@ -996,7 +1006,13 @@
   let warningBlinks = 0; // counts down remaining blinks (starts at 4 half-blinks = 2 full flashes)
 
   let baseKnockback = 26;
-  let hitDamage = 9;
+  const BASE_HIT_DAMAGE = 9;
+  let hitDamage = BASE_HIT_DAMAGE; // raised at run start by the 사격 훈련 perk
+  const CLEAR_GOLD = 30;
+  const SECOND_CAR_CLEAR_GOLD = 60;
+  const AD_REWARD_GOLD = 60;
+  const AD_MAX_PER_SHOP = 1; // rewarded ads per shop visit - keeps ads from buying the whole tree
+  let adsThisShop = 0;
 
   let gold = 0;
   let hasCompanion = false;
@@ -1126,9 +1142,10 @@
 
   // zombies that burst out of the train from stage 1 (ad/first-run hook)
   const ZOMBIE_FIRST_STAGE = 1;
-  const ZOMBIE_MULTI_STAGE = 25;   // from this stage, up to 2 can appear in one round
-  const ZOMBIE_TRIPLE_STAGE = 30;  // from this stage, up to 3 can appear in one round
-  const ZOMBIE_FIVE_STAGE = 35;    // from this stage, up to 5 can appear in one round
+  const ZOMBIE_MULTI_STAGE = 12;   // from this stage, up to 2 can appear in one round
+  const ZOMBIE_TRIPLE_STAGE = 20;  // from this stage, up to 3 can appear in one round
+  const ZOMBIE_FIVE_STAGE = 30;    // from this stage, up to 5 can appear in one round
+  const ZOMBIE_CHANCE_RAMP_STAGE = 30; // appearance odds ramp 30%→70% up to here, then +5%/stage
   const ZOMBIE_BASE_SPEED = 3.5;   // 1/4 of the original first-appearance speed
   const ZOMBIE_SPEED_STEP = 0.6;   // grows a little faster each stage past the first
   const ZOMBIE_BLAST_RADIUS = 70;  // if the shield man is standing this close when a zombie is popped, he dies too
@@ -1141,11 +1158,11 @@
   function zombieAppearChance(n){
     // stage 1 guaranteed elsewhere. 2~29: 30%→70% linear; 30+: 70%+(n-30)*5%
     if(n < 2) return 1;
-    if(n < ZOMBIE_TRIPLE_STAGE){
-      const stepEarly = (0.70 - 0.30) / ((ZOMBIE_TRIPLE_STAGE - 1) - 2);
+    if(n < ZOMBIE_CHANCE_RAMP_STAGE){
+      const stepEarly = (0.70 - 0.30) / ((ZOMBIE_CHANCE_RAMP_STAGE - 1) - 2);
       return Math.min(1, 0.30 + (n - 2) * stepEarly);
     }
-    return Math.min(1, 0.70 + (n - ZOMBIE_TRIPLE_STAGE) * 0.05);
+    return Math.min(1, 0.70 + (n - ZOMBIE_CHANCE_RAMP_STAGE) * 0.05);
   }
 
   function rollZombieCount(n){
@@ -1249,12 +1266,10 @@
     stageLabel.textContent = 'STAGE ' + String(n).padStart(2,'0');
     rebuildGrime();
 
-    // two-car trains: stage 30 is guaranteed, stage 31+ rolls per-round odds
-    // (50% through stage 34, 70% from stage 35 onward)
-    stageHasSecondCar = (n === SECOND_CAR_FIRST_STAGE) ? true
-      : (n > SECOND_CAR_FIRST_STAGE ? Math.random() < secondCarChance(n) : false);
+    // two-car trains: milestones (10, 20, 30...) are guaranteed, stage 21+ rolls per-round odds
+    stageHasSecondCar = isMilestone(n) || Math.random() < secondCarChance(n);
     onSecondCar = false;
-    secondCarMaxHP = Math.round(trainMaxHP / 2);
+    secondCarMaxHP = Math.round(trainMaxHP * (n < SECOND_CAR_FULL_HP_STAGE ? SECOND_CAR_HP_RATIO_EARLY : SECOND_CAR_HP_RATIO));
     secondCarSpeed = approachSpeed * SECOND_CAR_SPEED_MULT;
     warningTimer = 0;
     warningBlinks = 0;
@@ -1289,7 +1304,7 @@
 
     // zombies: stage 1 is a guaranteed single spawn so the first round matches ads;
     // every stage after that rolls independently for whether it happens at all,
-    // and (from stage 25+) how many show up together.
+    // and (from ZOMBIE_MULTI_STAGE) how many show up together.
     zombies = [];
     zombieSpawnedThisRound = false;
     zombieSpeed = ZOMBIE_BASE_SPEED + Math.max(0, n - ZOMBIE_FIRST_STAGE) * ZOMBIE_SPEED_STEP;
@@ -1315,15 +1330,64 @@
     seenIntro: 'stt_seen_intro',
     commuteDate: 'stt_commute_date',
     streak: 'stt_streak',
-    metrics: 'stt_metrics'
+    metrics: 'stt_metrics',
+    clientId: 'stt_cid',
+    merit: 'stt_merit',
+    perks: 'stt_perks'
   };
-  function todayStr(){
-    const d = new Date();
+  function dateStr(d){
     return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+  }
+  function todayStr(){
+    return dateStr(new Date());
   }
   function yesterdayStr(){
     const d = new Date(); d.setDate(d.getDate()-1);
-    return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+    return dateStr(d);
+  }
+  // whole local days from 'YYYY-MM-DD' to today (0 = same day, 1 = D1, ...)
+  function daysSince(s){
+    if(!s) return 0;
+    const p = s.split('-').map(Number);
+    const then = new Date(p[0], p[1]-1, p[2]);
+    const now = new Date(); now.setHours(0,0,0,0);
+    return Math.round((now - then) / 86400000);
+  }
+
+  // ---------- Analytics ----------
+  // Local counters feed the settings panel. The same events go to the collector in
+  // <meta name="stt-analytics"> (or window.STT_ANALYTICS_URL) and to GA4 if gtag is on the page.
+  // Payload is anonymous: random client id, session id, day index since first visit.
+  // Server-side: D1 retention = clients with a 'visit' at day 1 / clients with a 'visit' at day 0.
+  const ANALYTICS_URL = String(window.STT_ANALYTICS_URL
+    || (document.querySelector('meta[name="stt-analytics"]') || {}).content || '').trim();
+  const SESSION_ID = Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
+  function randomId(){
+    if(window.crypto && crypto.randomUUID) return crypto.randomUUID();
+    return Date.now().toString(36) + Math.random().toString(36).slice(2) + Math.random().toString(36).slice(2);
+  }
+  function clientId(){
+    let id = localStorage.getItem(LS.clientId);
+    if(!id){ id = randomId(); localStorage.setItem(LS.clientId, id); }
+    return id;
+  }
+  function sendEvent(name, props){
+    props = props || {};
+    try{ if(typeof window.gtag === 'function') window.gtag('event', name, props); }catch(e){}
+    if(!ANALYTICS_URL) return;
+    try{
+      const body = JSON.stringify(Object.assign({
+        e: name,
+        cid: clientId(),
+        sid: SESSION_ID,
+        day: daysSince(loadMetrics().firstSeen),
+        ts: Date.now()
+      }, props));
+      // text/plain keeps this a CORS "simple request" (no preflight)
+      const blob = new Blob([body], { type: 'text/plain' });
+      if(navigator.sendBeacon && navigator.sendBeacon(ANALYTICS_URL, blob)) return;
+      fetch(ANALYTICS_URL, { method: 'POST', body, keepalive: true, mode: 'no-cors', headers: { 'Content-Type': 'text/plain' } }).catch(()=>{});
+    }catch(e){}
   }
   function loadMetrics(){
     try{ return JSON.parse(localStorage.getItem(LS.metrics) || '{}'); }catch(e){ return {}; }
@@ -1338,37 +1402,124 @@
     if(last !== t && m.firstSeen === yesterdayStr()) m.d1Returns = 1;
     m.lastSeen = t;
     saveMetrics(m);
+    sendEvent('visit', { newDay: last !== t });
   }
-  function track(key){
+  // bump a local counter and send the matching event
+  function track(key, eventName, props){
     const m = loadMetrics();
     m[key] = (m[key] || 0) + 1;
     saveMetrics(m);
+    sendEvent(eventName, props);
   }
+
+  // ---------- 공로 (persistent meta progression) ----------
+  // 공로 survives the run. It comes from clearing stages and from the daily 근무
+  // check-in, and is spent in 근무 수첩 on permanent perks that shape the next run.
+  const MERIT_PER_CLEAR = 1;
+  const MERIT_PER_MILESTONE = 3;  // extra for each stage-10/20/30... milestone cleared
+  const COMMUTE_MERIT_STEP = 3;   // 근무 reward = streak x this
+  const COMMUTE_MERIT_MAX = 15;
+  const PERKS = {
+    fund:   { name: '비상금',    label: '시작 골드',   costs: [4, 8, 12, 16, 20], per: 30,
+              fmt: (l)=> '+' + (l*30) + 'G' },
+    drill:  { name: '사격 훈련', label: '기본 데미지', costs: [6, 10, 14, 18, 22], per: 0.1,
+              fmt: (l)=> '+' + (l*10) + '%' },
+    bounty: { name: '포상금',    label: '파괴 골드',   costs: [8, 12, 16, 20],     per: 5,
+              fmt: (l)=> '+' + (l*5) + 'G' }
+  };
+  let runIsTest = false; // 30R TEST runs never pay out 공로
+  let runStartStage = 1;
+  function loadPerks(){
+    try{ return JSON.parse(localStorage.getItem(LS.perks) || '{}'); }catch(e){ return {}; }
+  }
+  function perkLevel(key){
+    const l = parseInt(loadPerks()[key], 10);
+    return isNaN(l) ? 0 : Math.max(0, Math.min(PERKS[key].costs.length, l));
+  }
+  function meritNow(){ return lsNum(LS.merit, 0); }
+  function addMerit(n){
+    if(n > 0) localStorage.setItem(LS.merit, String(meritNow() + n));
+  }
+  function perkNextCost(key){
+    const l = perkLevel(key);
+    return l < PERKS[key].costs.length ? PERKS[key].costs[l] : 0;
+  }
+  function canBuyAnyPerk(){
+    const m = meritNow();
+    return Object.keys(PERKS).some(k => { const c = perkNextCost(k); return c > 0 && m >= c; });
+  }
+  function buyPerk(key){
+    const cost = perkNextCost(key);
+    if(!cost || meritNow() < cost) return;
+    localStorage.setItem(LS.merit, String(meritNow() - cost));
+    const p = loadPerks();
+    p[key] = perkLevel(key) + 1;
+    localStorage.setItem(LS.perks, JSON.stringify(p));
+    sfx('ui');
+    sendEvent('perk_buy', { perk: key, level: p[key] });
+    refreshRecordsUI();
+  }
+  function commuteMerit(streak){ return Math.min(COMMUTE_MERIT_MAX, COMMUTE_MERIT_STEP * Math.max(1, streak)); }
+  function runMerit(reachedStage, startStage){
+    const cleared = Math.max(0, reachedStage - startStage);
+    let milestones = 0;
+    for(let s = startStage; s < reachedStage; s++) if(isMilestone(s)) milestones++;
+    return cleared * MERIT_PER_CLEAR + milestones * MERIT_PER_MILESTONE;
+  }
+
   function markCommute(){
     const t = todayStr();
     const last = localStorage.getItem(LS.commuteDate) || '';
     const streakNow = lsNum(LS.streak, 0);
-    if(last === t) return { bonus: 0, streak: streakNow, already: true };
+    if(last === t) return { merit: 0, streak: streakNow, already: true };
     const streak = (last === yesterdayStr()) ? streakNow + 1 : 1;
     localStorage.setItem(LS.commuteDate, t);
     localStorage.setItem(LS.streak, String(streak));
-    return { bonus: Math.min(50, 10 * streak), streak, already: false };
+    const merit = commuteMerit(streak);
+    addMerit(merit);
+    sendEvent('commute', { streak, merit });
+    return { merit, streak, already: false };
   }
+  // the title line always says what showing up (again) is worth
   function refreshCommuteLine(){
     if(!commuteLineEl) return;
     const last = localStorage.getItem(LS.commuteDate) || '';
     const streak = lsNum(LS.streak, 0);
     const t = todayStr();
-    if(last === t) commuteLineEl.textContent = '오늘 근무 · 스트릭 ' + streak + '일 · 내일도 근무';
-    else if(last === yesterdayStr()) commuteLineEl.textContent = '어제 ' + streak + '일 · 오늘 근무하면 이어집니다';
-    else if(streak > 0) commuteLineEl.textContent = '근무가 끊겼습니다 · 오늘 다시 서세요';
-    else commuteLineEl.textContent = '내일 근무를 기록하세요';
+    if(last === t) commuteLineEl.textContent = '오늘 근무 · 스트릭 ' + streak + '일 · 내일 오면 공로 +' + commuteMerit(streak + 1);
+    else if(last === yesterdayStr()) commuteLineEl.textContent = '스트릭 ' + streak + '일 · 오늘 근무하면 공로 +' + commuteMerit(streak + 1);
+    else if(streak > 0) commuteLineEl.textContent = '근무가 끊겼습니다 · 오늘 다시 서면 공로 +' + commuteMerit(1);
+    else commuteLineEl.textContent = '첫 근무 · 시작하면 공로 +' + commuteMerit(1);
+    if(recordsBtn) recordsBtn.textContent = canBuyAnyPerk() ? '근무 수첩 · 강화 가능' : '근무 수첩';
+  }
+  function refreshPerkCard(key, nameId, descId, btnId){
+    const perk = PERKS[key];
+    const l = perkLevel(key);
+    const max = perk.costs.length;
+    const nameEl = document.getElementById(nameId);
+    const descEl = document.getElementById(descId);
+    const btn = document.getElementById(btnId);
+    if(nameEl) nameEl.textContent = perk.name + ' Lv.' + l + '/' + max;
+    if(descEl) descEl.textContent = perk.label + ' ' + perk.fmt(l)
+      + (l < max ? ' → ' + perk.fmt(l + 1) : ' (최대)');
+    if(btn){
+      if(l < max){
+        btn.textContent = '공로 ' + perk.costs[l];
+        btn.disabled = meritNow() < perk.costs[l];
+      } else {
+        btn.textContent = 'MAX';
+        btn.disabled = true;
+      }
+    }
   }
   function refreshRecordsUI(){
     recordStageEl.textContent = lsNum(LS.bestStage, 1);
     recordMashEl.textContent = lsNum(LS.bestMash, 0);
     if(recordStreakEl) recordStreakEl.textContent = String(lsNum(LS.streak, 0));
-    if(recordUnlockEl) recordUnlockEl.textContent = '선도부장';
+    if(recordMeritEl) recordMeritEl.textContent = String(meritNow());
+    refreshPerkCard('fund', 'perkFundName', 'perkFundDesc', 'perkFundBtn');
+    refreshPerkCard('drill', 'perkDrillName', 'perkDrillDesc', 'perkDrillBtn');
+    refreshPerkCard('bounty', 'perkBountyName', 'perkBountyDesc', 'perkBountyBtn');
   }
   function lsNum(key, fallback){
     const v = parseInt(localStorage.getItem(key) || '', 10);
@@ -1435,6 +1586,7 @@
     state = 'banner';
     hideAllFlow();
     bannerText.textContent = 'STAGE ' + String(stage).padStart(2, '0');
+    if(bannerSub) bannerSub.classList.toggle('hidden', !isMilestone(stage));
     bannerOverlay.classList.remove('hidden');
     setHud(true, false);
     armFlow(BANNER_MS);
@@ -1464,10 +1616,14 @@
     resetLoadout();
     trainsDestroyed = opts.trainsDestroyed || 0;
     stage = opts.stage || 1;
-    gold = opts.gold || 0;
+    runStartStage = stage;
+    runIsTest = false;
+    // permanent perks from 근무 수첩
+    gold = (opts.gold || 0) + perkLevel('fund') * PERKS.fund.per;
+    hitDamage = BASE_HIT_DAMAGE * (1 + perkLevel('drill') * PERKS.drill.per);
     if(stage === 1){
-      gold += markCommute().bonus;
-      track('stage1Starts');
+      markCommute();
+      track('stage1Starts', 'stage1_start');
       refreshCommuteLine();
     }
     updateGoldUI();
@@ -1560,6 +1716,9 @@
     resetLoadout();
     trainsDestroyed = 0;
     stage = 29;
+    runStartStage = stage;
+    runIsTest = true;
+    hitDamage = BASE_HIT_DAMAGE;
     gold = 1000;
     updateGoldUI();
     hideAllFlow();
@@ -1576,6 +1735,10 @@
     sfx('fail');
     state = 'over';
     saveBests();
+    const merit = runIsTest ? 0 : runMerit(stage, runStartStage);
+    addMerit(merit);
+    if(!runIsTest) sendEvent('run_end', { stage, merit, trains: trainsDestroyed });
+    if(finalMeritEl) finalMeritEl.textContent = '+' + merit;
     finalStageEl.textContent = stage;
     finalComboEl.textContent = bestMash;
     finalGoldEl.textContent = gold;
@@ -1648,7 +1811,8 @@
 
   function nextStage(){
     sfx('clear');
-    if(stage === 1) track('stage1Clears');
+    if(stage === 1) track('stage1Clears', 'stage1_clear');
+    if(!runIsTest) sendEvent('stage_clear', { stage });
     state = 'settle';
     const gained = Math.max(0, gold - goldAtStageStart);
     settleTitle.textContent = 'STAGE ' + String(stage).padStart(2,'0') + ' CLEAR';
@@ -1683,7 +1847,7 @@
         buyCompanionBtn.disabled = gold < COMPANION_COST;
       } else {
         companionItemName.textContent = '선도부 위원';
-        companionItemDesc.textContent = '선도부 위원. 옆에서 0.5초마다 자동 사격';
+        companionItemDesc.textContent = '옆에서 0.5초마다 자동 사격';
         buyCompanionBtn.textContent = COMPANION_COST + 'G 구매';
         buyCompanionBtn.disabled = gold < COMPANION_COST;
       }
@@ -1694,7 +1858,7 @@
       buyCompanionBtn.disabled = gold < COMPANION_UPGRADE_COST;
     } else if(!hasDrone){
       companionItemName.textContent = '드론';
-      companionItemDesc.textContent = '미사일 발사, 넉백 매그넘의 3배, 주인공 머리 위에서 호버링 (연사속도는 동료 기본 속도의 절반)';
+      companionItemDesc.textContent = '미사일 발사, 넉백 매그넘의 3배, 선도부장 머리 위에서 호버링 (연사속도는 동료 기본 속도의 절반)';
       buyCompanionBtn.textContent = DRONE_COST + 'G 구매';
       buyCompanionBtn.disabled = gold < DRONE_COST;
     } else if(!hasRambo){
@@ -1710,44 +1874,44 @@
     } else {
       companionItemName.textContent = '드론 업그레이드';
       companionItemDesc.textContent = '유도미사일로 좀비를 자동 타격, 발사속도 2배, 외형도 더 멋지게 강화';
-      buyCompanionBtn.textContent = '보유중';
+      buyCompanionBtn.textContent = '보유 중';
       buyCompanionBtn.disabled = true;
     }
 
     if(!hasMagnum){
       magnumItemName.textContent = '매그넘 권총';
-      magnumItemDesc.textContent = '넉백량 3.9배, 데미지 1.65배 증가 (연사 제한 없음 - 2번 클릭당 1발 발사)';
+      magnumItemDesc.textContent = '넉백량 3.9배, 데미지 1.65배 증가 (연사 제한 없음 · 2탭당 1발)';
       buyMagnumBtn.textContent = '90G 구매';
       buyMagnumBtn.disabled = gold < 90;
     } else if(!hasRifle){
       magnumItemName.textContent = '라이플';
-      magnumItemDesc.textContent = '한 번 클릭에 두 발을 빠르게 연사 (데미지 1.3배, 넉백 2배)';
+      magnumItemDesc.textContent = '한 번 탭에 두 발 연사 (데미지 1.3배, 넉백 2배)';
       buyMagnumBtn.textContent = RIFLE_COST + 'G 구매';
       buyMagnumBtn.disabled = gold < RIFLE_COST;
     } else if(!hasMinigun){
       magnumItemName.textContent = '미니건';
-      magnumItemDesc.textContent = '클릭당 세 발 발사, 라이플보다 최대 연사속도가 더 빠름, 장탄수 100발 (재장전은 라이플의 3배 느림, 발당 데미지·넉백은 절반)';
+      magnumItemDesc.textContent = '탭당 3발, 라이플보다 최대 연사속도가 더 빠름, 장탄수 100발 (재장전은 라이플의 3배 느림, 발당 데미지·넉백은 절반)';
       buyMagnumBtn.textContent = MINIGUN_COST + 'G 구매';
       buyMagnumBtn.disabled = gold < MINIGUN_COST;
     } else if(!hasTurret){
       magnumItemName.textContent = '설치형 머신건';
-      magnumItemDesc.textContent = '클릭당 3발, 탄약 무제한, 넉백 미니건의 1.5배, 고정 포탑';
+      magnumItemDesc.textContent = '탭당 3발, 탄약 무제한, 넉백 미니건의 1.5배, 고정 포탑';
       buyMagnumBtn.textContent = TURRET_COST + 'G 구매';
       buyMagnumBtn.disabled = gold < TURRET_COST;
     } else if(!hasSniper){
       magnumItemName.textContent = '대전차 저격총';
-      magnumItemDesc.textContent = '넉백 매그넘의 6배, 고정 데미지 170 (연사 제한 없음 - 4번 클릭당 1발 발사)';
+      magnumItemDesc.textContent = '넉백 매그넘의 6배, 고정 데미지 170 (연사 제한 없음 · 4탭당 1발)';
       buyMagnumBtn.textContent = SNIPER_COST + 'G 구매';
       buyMagnumBtn.disabled = gold < SNIPER_COST;
     } else {
       magnumItemName.textContent = '대전차 저격총';
-      magnumItemDesc.textContent = '넉백 매그넘의 6배, 고정 데미지 170 (연사 제한 없음 - 4번 클릭당 1발 발사)';
-      buyMagnumBtn.textContent = '보유중';
+      magnumItemDesc.textContent = '넉백 매그넘의 6배, 고정 데미지 170 (연사 제한 없음 · 4탭당 1발)';
+      buyMagnumBtn.textContent = '보유 중';
       buyMagnumBtn.disabled = true;
     }
 
     if(hasShieldMan && shieldManAlive){
-      buyShieldBtn.textContent = '보유중';
+      buyShieldBtn.textContent = '보유 중';
       buyShieldBtn.disabled = true;
     } else {
       const shieldCostNow = hasShieldMan ? SHIELD_COST_REBUY : SHIELD_COST_INITIAL;
@@ -1762,18 +1926,18 @@
       buyShieldUpgradeBtn.disabled = gold < SHIELD_SLOW_UPGRADE_COST;
     } else if(!hasWarrior){
       shieldUpgradeItemName.textContent = '전사';
-      shieldUpgradeItemDesc.textContent = '체육부장 최종. 칼을 계속 휘둘러 사정거리 안의 이세계 개체를 처치하고, 매 스윙마다 열차에 고정 50 데미지. 열차 속도 감소량 0.04, 버티는 시간 4초';
+      shieldUpgradeItemDesc.textContent = '체육부장 최종. 칼을 계속 휘둘러 사정거리 안의 좀비를 처치하고, 매 스윙마다 열차에 고정 50 데미지. 열차 속도 감소량 0.04, 버티는 시간 4초';
       buyShieldUpgradeBtn.textContent = WARRIOR_COST + 'G 구매';
       buyShieldUpgradeBtn.disabled = gold < WARRIOR_COST;
     } else if(!hasIndomitable){
       shieldUpgradeItemName.textContent = '불굴의 전사';
-      shieldUpgradeItemDesc.textContent = '전사의 최종형. 카운트다운 없이 절대 죽지 않습니다. 검붉은 갑옷, 황금빛 검. 기차가 닿으면 그저 "..."';
+      shieldUpgradeItemDesc.textContent = '전사의 최종형. 카운트다운 없이 절대 죽지 않습니다. 검붉은 갑옷, 황금빛 검. 열차가 닿으면 그저 "..."';
       buyShieldUpgradeBtn.textContent = INDOMITABLE_COST + 'G 구매';
       buyShieldUpgradeBtn.disabled = gold < INDOMITABLE_COST;
     } else {
       shieldUpgradeItemName.textContent = '불굴의 전사';
-      shieldUpgradeItemDesc.textContent = '전사의 최종형. 카운트다운 없이 절대 죽지 않습니다. 검붉은 갑옷, 황금빛 검. 기차가 닿으면 그저 "..."';
-      buyShieldUpgradeBtn.textContent = '보유중';
+      shieldUpgradeItemDesc.textContent = '전사의 최종형. 카운트다운 없이 절대 죽지 않습니다. 검붉은 갑옷, 황금빛 검. 열차가 닿으면 그저 "..."';
+      buyShieldUpgradeBtn.textContent = '보유 중';
       buyShieldUpgradeBtn.disabled = true;
     }
 
@@ -1787,11 +1951,18 @@
       buyReloadUpgradeBtn.textContent = 'MAX';
       buyReloadUpgradeBtn.disabled = true;
     }
+
+    if(watchAdBtn){
+      const adsLeft = AD_MAX_PER_SHOP - adsThisShop;
+      watchAdBtn.textContent = adsLeft > 0 ? '광고 보고 +' + AD_REWARD_GOLD + 'G' : '광고 보상 받음 · 다음 비품실에서';
+      watchAdBtn.disabled = adsLeft <= 0;
+    }
   }
 
   function openShop(){
     flowUntil = 0;
     state = 'shop';
+    adsThisShop = 0;
     hideAllFlow();
     updateShopUI();
     shopOverlay.classList.remove('hidden');
@@ -1934,7 +2105,8 @@
     showSting();
   }
   function playRewardedAd(){
-    if(adTimer || !adOverlay) return;
+    if(adTimer || !adOverlay || adsThisShop >= AD_MAX_PER_SHOP) return;
+    adsThisShop += 1;
     sfx('ui');
     const timeEl = document.getElementById('adTime');
     const bar = document.getElementById('adBarFill');
@@ -1955,8 +2127,9 @@
         clearInterval(adTimer);
         adTimer = 0;
         adOverlay.classList.add('hidden');
-        gold += 60;
+        gold += AD_REWARD_GOLD;
         updateGoldUI();
+        if(!runIsTest) sendEvent('ad_reward', { stage });
         if(state === 'shop') updateShopUI();
         sfx('ui');
       }
@@ -2021,7 +2194,7 @@
 
     if(trainHP <= 0){
       // destroying the burning second car pays out more than a regular car
-      gold += onSecondCar ? 60 : 30;
+      gold += (onSecondCar ? SECOND_CAR_CLEAR_GOLD : CLEAR_GOLD) + perkLevel('bounty') * PERKS.bounty.per;
       trainsDestroyed += 1;
       updateGoldUI();
       civilianActive = false; // he goes down with the train if he was still up there
@@ -2371,6 +2544,11 @@
     el.addEventListener('click', skipRitual);
     el.addEventListener('touchstart', (e)=>{ e.preventDefault(); skipRitual(); }, {passive:false});
   });
+  // dev-only shortcut: shown on localhost / file:// or with ?dev, never on the live site
+  const DEV_BUILD = location.protocol === 'file:'
+    || /^(localhost|127\.0\.0\.1)$/.test(location.hostname)
+    || /[?&]dev\b/.test(location.search);
+  if(!DEV_BUILD) testSkipBtn.style.display = 'none';
   testSkipBtn.addEventListener('click', (e)=>{ e.stopPropagation(); startLateTest(); });
   buyCompanionBtn.addEventListener('click', buyCompanionOrUpgrade);
   buyMagnumBtn.addEventListener('click', buyMagnumOrRifle);
@@ -2378,6 +2556,9 @@
   buyShieldUpgradeBtn.addEventListener('click', buyShieldSlowUpgrade);
   buyReloadUpgradeBtn.addEventListener('click', buyReloadUpgrade);
   shopContinueBtn.addEventListener('click', closeShop);
+  document.getElementById('perkFundBtn').addEventListener('click', ()=> buyPerk('fund'));
+  document.getElementById('perkDrillBtn').addEventListener('click', ()=> buyPerk('drill'));
+  document.getElementById('perkBountyBtn').addEventListener('click', ()=> buyPerk('bounty'));
 
   // ---------- Rendering ----------
   function approachSpeedSafe(){
@@ -2881,11 +3062,12 @@
   }
 
   function drawRambo(cx, groundY, flashT){
-    if(sprOk('companion')){
+    if(sprOk('rambo') || sprOk('companion')){
+      const spr = sprOk('rambo') ? SPR.rambo : SPR.companion;
       ctx.save();
       ctx.fillStyle = 'rgba(0,0,0,0.4)';
       ctx.beginPath(); ctx.ellipse(cx+4, groundY+2, 26, 6, 0, 0, Math.PI*2); ctx.fill();
-      drawSprite(SPR.companion, cx + 12, groundY + 2, 120, 0.42);
+      drawSprite(spr, cx + 12, groundY + 2, sprOk('rambo') ? 132 : 120, 0.42);
       const barW = 26, barH = 4;
       const bx = cx-13, by = groundY - 128;
       ctx.fillStyle = '#1a1f1a';
@@ -3317,15 +3499,25 @@
   function drawShieldMan(x, groundY, blocking, blockTimer){
     const bodyY = groundY - 46;
     if(sprOk('shieldman')){
+      // the 체육부장 line shares one slot: pick the highest tier we have art for
+      const spr = (hasIndomitable && sprOk('indomitable')) ? SPR.indomitable
+        : ((hasWarrior && sprOk('warrior')) ? SPR.warrior : SPR.shieldman);
       ctx.save();
       ctx.fillStyle = 'rgba(0,0,0,0.4)';
       ctx.beginPath(); ctx.ellipse(x+8, groundY+3, 28, 6, 0, 0, Math.PI*2); ctx.fill();
-      drawSprite(SPR.shieldman, x + 18, groundY + 2, 110, 0.45);
+      if(hasWarrior && spr !== SPR.shieldman){
+        // rock the whole sprite forward on each sword swing
+        const swing = Math.sin(performance.now() / WARRIOR_SWING_INTERVAL * Math.PI * 2) * 0.10;
+        ctx.translate(x + 18, groundY + 2);
+        ctx.rotate(swing);
+        ctx.translate(-(x + 18), -(groundY + 2));
+      }
+      drawSprite(spr, x + 18, groundY + 2, hasWarrior ? 118 : 110, 0.45);
       const blockGlow = blocking ? (0.55 + Math.sin(performance.now()/90)*0.35) : 0;
       if(blocking){
         ctx.fillStyle = `rgba(255,210,120,${Math.max(0,blockGlow)*0.35})`;
         ctx.beginPath(); ctx.arc(x+28, groundY-50, 26, 0, Math.PI*2); ctx.fill();
-        ctx.font = "10px 'Press Start 2P'";
+        ctx.font = "bold 11px 'Noto Sans KR', sans-serif";
         ctx.fillStyle = '#fff2c2';
         if(hasIndomitable){
           ctx.fillText('∞', x-8, groundY-118);
@@ -3388,7 +3580,7 @@
       ctx.fillStyle = `rgba(255,210,120,${Math.max(0,blockGlow)*0.45})`;
       ctx.beginPath(); ctx.arc(x+20, bodyY+12, 22, 0, Math.PI*2); ctx.fill();
 
-      ctx.font = "10px 'Press Start 2P'";
+      ctx.font = "bold 11px 'Noto Sans KR', sans-serif";
       ctx.fillStyle = '#fff2c2';
       if(hasIndomitable){
         ctx.fillText('∞', x-8, bodyY-14);
@@ -3845,6 +4037,24 @@
     ctx.fillStyle = 'rgba(0,0,0,0.18)';
     ctx.beginPath(); ctx.ellipse(x, bodyY+2, up ? 17 : 14, 3, 0, 0, Math.PI*2); ctx.fill();
 
+    const droneSpr = up ? (sprOk('drone_up') ? 'drone_up' : (sprOk('drone') ? 'drone' : null)) : (sprOk('drone') ? 'drone' : null);
+    if(droneSpr){
+      // painted drone: centered on the same hover point the vector version used
+      const h = up ? 46 : 36;
+      const img = SPR[droneSpr];
+      const w = h * (img.naturalWidth / img.naturalHeight);
+      ctx.drawImage(img, x - w/2, y - h/2, w, h);
+      if(flashT > 0){
+        const r = 12*flashT + 4;
+        ctx.fillStyle = up ? 'rgba(255,240,200,0.85)' : 'rgba(255,250,220,0.85)';
+        ctx.beginPath(); ctx.arc(x, y+6, r*0.4, 0, Math.PI*2); ctx.fill();
+        ctx.fillStyle = up ? 'rgba(255,200,80,0.35)' : 'rgba(255,150,60,0.35)';
+        ctx.beginPath(); ctx.arc(x, y+6, r, 0, Math.PI*2); ctx.fill();
+      }
+      ctx.restore();
+      return;
+    }
+
     // body
     ctx.fillStyle = up ? '#717c84' : '#586166';
     ctx.fillRect(x-(up?13:10), y-5, up?26:20, 10);
@@ -4077,7 +4287,7 @@
       ctx.fillRect(s.x, s.y, 4, 4);
     });
     floaters.forEach(f=>{
-      ctx.font = "11px 'Press Start 2P'";
+      ctx.font = "bold 12px 'Noto Sans KR', sans-serif";
       ctx.fillStyle = `rgba(255,240,190,${Math.max(0,f.life)})`;
       ctx.fillText(f.text, f.x, f.y);
     });
@@ -4408,7 +4618,7 @@
 
     if(warningBlinks > 0 && (warningBlinks % 2 === 0)){
       ctx.save();
-      ctx.font = "bold 28px 'Press Start 2P', monospace";
+      ctx.font = "bold 28px 'Cinzel', serif";
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
       const wx = W/2, wy = H*0.4;
