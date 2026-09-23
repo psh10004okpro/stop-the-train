@@ -300,12 +300,13 @@
   <p>라이브 빌드가 기준이다. 시안이 라이브와 다르면 시안은 후보일 뿐이다.</p>
   <table>
     <tr><th>항목</th><th>기준</th></tr>
-    <tr><td>화면</td><td>가로 16:9 고정, 최대 1920×1080. 캐릭터 왼쪽 16% 지점, 열차는 오른쪽에서 온다. HUD는 좌상(열차 체력·골드·탄약)·우상(거리·연타)·하단(힌트)</td></tr>
+    <tr><td>화면</td><td>가로 16:9 고정, 최대 1920×1080. 캐릭터 왼쪽 16% 지점, 열차는 오른쪽에서 온다. HUD는 좌상(열차 체력·골드·탄약)·우상(거리·연타)·하단(힌트). 캐릭터는 전신 스프라이트로 발이 지면선(화면 높이 82%)에 닿는다 — 선도부장 176px, 동료 148~156px, 체육부장 라인 132~140px, 좀비 100px. 열차 그림의 앞면은 판정선(x−130)에 맞춘다</td></tr>
     <tr><td>글꼴</td><td>영문 제목·배너(STOP THE TRAIN, STAGE 01, TRAIN BREACH)는 <b>Cinzel</b>. 나머지 한글·숫자는 전부 <b>Noto Sans KR</b>. 이미지 안에 글자를 굽지 않는다 — 글자는 HTML로 올린다</td></tr>
     <tr><td>색</td><td>배경 남흑 <code>#07080f</code>·<code>#10131c</code> / UI 가죽 갈색 / 황동 <code>#c9a45c</code>·<code>#e8c37a</code> / 완장 노랑 <code>#f5d000</code>(강조·거리 바) / 크림 글자 <code>#f6ead0</code> / 경고·광고 빨강 <code>#e35d6a</code>. 열차 체력 바만 빨강, 거리 바는 노랑</td></tr>
     <tr><td>버튼</td><td>갈색 가죽 캡슐 + 왼쪽 끝 노란 완장 띠 = 진행·구매·메뉴 전부(게임 시작, 구매, 다음 열차, 근무 수첩, 설정, 닫기) / 빨간 가죽 = 광고 하나뿐. 못 사는 버튼은 흐리게 잠근다</td></tr>
-    <tr><td>패널</td><td>갈색 가죽 판에 황동 리벳 테두리, 위쪽에 노란 띠(<code>ui_over_panel</code>·<code>ui_shop_card</code>·<code>ui_title_plate</code>). HUD 바는 오른쪽이 뾰족한 가죽 띠, 연타 판은 완장 매듭이 그려진 마름모. 비품실과 근무 수첩은 같은 3열 카드 레이아웃을 쓴다</td></tr>
+    <tr><td>패널</td><td>갈색 가죽 판에 황동 리벳 테두리, 위쪽에 노란 띠(<code>ui_over_panel</code>·<code>ui_shop_card</code>·<code>ui_title_plate</code>). HUD 바는 오른쪽이 뾰족한 가죽 띠, 연타 판은 완장 매듭이 그려진 마름모. 비품실과 근무 수첩은 같은 3열 카드 레이아웃을 쓴다. <b>판과 바는 9-slice(<code>border-image</code>)로 그린다</b> — 끝단·리벳·호루라기·동전은 고정하고 가운데만 반복한다. 배경 이미지를 <code>100% 100%</code>로 늘려 붙이지 않는다</td></tr>
     <tr><td>아이콘</td><td>채택안 9 일러스트 아이콘: 하트(열차 체력)·금화(골드)·탄피(탄약)·숫양 열차(거리)·장갑(연타)</td></tr>
+    <tr><td>이펙트</td><td>스프라이트 6종(<code>fx_muzzle</code> 총구 화염, <code>fx_spark</code> 타격 스파크, <code>fx_fireball</code>·<code>fx_smoke</code> 폭발, <code>fx_ring</code> 충격파, <code>fx_block</code> 저지 장벽)을 가산 합성(lighter)으로 그린다. 파편·예광탄은 벡터 그대로</td></tr>
     <tr><td>문구</td><td>짧은 명사형, 가운뎃점(·)으로 잇는다. 모바일 기준이라 「클릭」이 아니라 「탭」. 숫자 단위: 골드 <code>G</code>, 연타 <code>타/초</code>, 공로는 단위 없이 숫자</td></tr>
   </table>
   <p><span class="st ok">결정</span> UI 프레임을 캐릭터 톤에 맞췄다. 후보였던 플랫 라인 키트(13~16안) 대신, 같은 갈색·노랑·빨강을 <b>가죽·황동 재질</b>로 옮겼다 — 일러스트 스프라이트·배경과 같은 그림체를 유지하면서 완장 띠로 선도부를 드러낸다. 새 UI 조각은 <code>tools/art_proto.mjs</code>의 <code>UI</code> 스타일 문자열로 만든다.
@@ -342,7 +343,7 @@
     <tr><td><code>plan/mash-feasibility.md</code></td><td>연타 장르 시장성 조사 (근거 자료)</td><td><span class="st ok">참고</span></td></tr>
     <tr><td><code>concept/index.html</code></td><td>UI 보드: 전투 시안 + 키트 1~18안. <code>concept/ref/</code>는 선도부 캐릭터 레퍼런스</td><td><span class="st wait">후보</span></td></tr>
     <tr><td><code>flow_doc_assets/</code></td><td>스플래시·인트로 등 연출 이미지 (이 문서가 씀)</td><td><span class="st ok">기준</span></td></tr>
-    <tr><td><code>tools/</code></td><td>아트 파이프라인 <code>art_proto.mjs</code>(생성) → <code>art_review.mjs</code>(GPT-6 Astra 비전 검수) → <code>pack_proto_art.py</code>(에셋 반영), 화면 촬영 <code>shoot_screens.py</code>, 검증 <code>verify_*</code>. <code>elice_*</code>·<code>pack_elice_art.py</code>·<code>pack_seondo_art.py</code>는 이전 세대 파이프라인</td><td><span class="st ok">기준</span></td></tr>
+    <tr><td><code>tools/</code></td><td>아트 파이프라인 <code>art_proto.mjs</code>·<code>art_fix.mjs</code>(생성·편집) → <code>art_review.mjs</code>(GPT-6 Astra 비전 검수) → <code>pack_proto_art.py</code>·<code>pack_fix_art.py</code>(에셋 반영) → <code>optimize_assets.py</code>, 화면 촬영 <code>shoot_screens.py</code>, 검증 <code>verify_*</code>. <code>elice_*</code>·<code>pack_elice_art.py</code>·<code>pack_seondo_art.py</code>는 이전 세대 파이프라인</td><td><span class="st ok">기준</span></td></tr>
     <tr><td><code>elice.env</code> · <code>elice_out/</code></td><td>이미지 API 키(커밋 금지, .gitignore) · 생성 원본과 검수 결과(커밋 안 함)</td><td>로컬</td></tr>
     <tr><td><code>archive/</code></td><td>v2 기획서, 학생회 세계관, 게임 플로우 설계서(구현 완료), UI 1~6안 보드, 쓰이지 않는 시안</td><td>폐기</td></tr>
   </table>
