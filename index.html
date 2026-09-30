@@ -677,6 +677,8 @@
 
 <script>
 (function(){
+  // rail/platform line of the station backdrop (bg_front.png is opaque from 78.3% down)
+  const GROUND_RATIO = 0.785;
   const canvas = document.getElementById('game');
   const ctx = canvas.getContext('2d');
   const hpFill = document.getElementById('hpFill');
@@ -762,7 +764,7 @@
   }
   function rebuildPaintCache(){
     if(W < 2 || H < 2) return;
-    const groundY = H * 0.82;
+    const groundY = H*GROUND_RATIO;
 
     const skyH = groundY + 40;
     paint.sky = makeLayer(W, skyH);
@@ -892,9 +894,9 @@
     // shieldman → warrior → indomitable are the 체육부장 growth line; rambo replaces the
     // companion at its top tier; drone/drone_up hover over the player
     ['player','train','zombie','companion','civilian','shieldman','warrior','indomitable','rambo','drone','drone_up',
-     'turret','fx_muzzle','fx_spark','fx_fireball','fx_smoke','fx_ring','fx_block'].forEach(n=>{
+     'turret','train_damaged','bg_back','bg_front','fx_muzzle','fx_spark','fx_fireball','fx_smoke','fx_ring','fx_block'].forEach(n=>{
       const img = new Image();
-      img.src = ASSET_DIR + n + '.png';
+      img.src = ASSET_DIR + n + (n === 'bg_back' ? '.jpg' : '.png');
       SPR[n] = img;
     });
     SPR.playerAtk = [];
@@ -2257,7 +2259,7 @@
     if(!trainVisible) return false;
     sfx('metal');
     // small painted spark where the round lands on the train's front
-    pushFx(impactFlashes, { x: currentTrainX - 130 + 8 + Math.random()*24, y: H*0.82 - 110 + Math.random()*70,
+    pushFx(impactFlashes, { x: currentTrainX - 130 + 8 + Math.random()*24, y: H*GROUND_RATIO - 110 + Math.random()*70,
       r: 8 + Math.min(12, knockMult*1.2), life: 1, rot: Math.random()*Math.PI*2 });
 
     const dmg = (flatDamage !== undefined) ? flatDamage : Math.round(hitDamage * dmgMult);
@@ -2270,7 +2272,7 @@
     shake = Math.min(30, shake + 2.2 + knockMult * 1.1);
 
     // damage number pops up at the train's hit point instead of the player's muzzle
-    const groundYNow = H * 0.82;
+    const groundYNow = H*GROUND_RATIO;
     const trainFrontX = currentTrainX - 130;
     const numX = trainFrontX + 12 + Math.random()*28;
     const numY = groundYNow - 130 + Math.random()*70;
@@ -2286,7 +2288,7 @@
       const nearX2 = W*PLAYER_X_RATIO + 130;
       const farX2 = W + 260;
       const tx = nearX2 + t2*(farX2-nearX2);
-      const groundY = H*0.82;
+      const groundY = H*GROUND_RATIO;
       if(stageHasSecondCar && !onSecondCar){
         transitionToSecondCar(tx, groundY - 90);
       } else {
@@ -2419,7 +2421,7 @@
   function fireOneRound(stats){
     sfx('shot');
     const px = W * PLAYER_X_RATIO;
-    const groundY = H * 0.82;
+    const groundY = H*GROUND_RATIO;
     const m = getPlayerMuzzle(px, groundY);
     if(hasTurret && !hasSniper){
       turretFlash = 1; // the turret has its own muzzle flash, not the player's arm
@@ -2484,7 +2486,7 @@
     if(state !== 'playing') return;
     companionFlash = 1;
     const px = W * PLAYER_X_RATIO;
-    const groundY = H * 0.82;
+    const groundY = H*GROUND_RATIO;
     const m = getCompanionMuzzle(px, groundY);
     spawnBullet(m.x, m.y, hasRambo ? 'gold' : undefined);
     applyDamageIfVisible(1, 1); // the companion's damage/knockback are unaffected by the player's weapon upgrades
@@ -2503,7 +2505,7 @@
     if(state !== 'playing') return;
     droneFlash = 1;
     const px = W * PLAYER_X_RATIO;
-    const groundY = H * 0.82;
+    const groundY = H*GROUND_RATIO;
     const m = getDroneMuzzle(px, groundY);
 
     if(hasDroneUpgrade && zombies.length > 0){
@@ -2651,10 +2653,15 @@
   }
 
   function drawBackground(now, dt){
-    const groundY = H * 0.82;
+    const groundY = H*GROUND_RATIO;
 
+    if(sprOk('bg_back') && sprOk('bg_front')){
+      // station backdrop in two layers: platform/walls behind, near rails + gravel in front
+      ctx.drawImage(SPR.bg_back, 0, 0, W, H);
+      ctx.drawImage(SPR.bg_front, 0, 0, W, H);
+      return groundY;
+    }
     if(sprOk('bgPlay')){
-      // the painted side-view backdrop carries its own track bed (rail top at 82%), so it fills the stage
       ctx.drawImage(SPR.bgPlay, 0, 0, W, H);
     } else {
       ctx.drawImage(paint.sky.c, 0, 0, paint.sky.w, paint.sky.h);
@@ -3877,9 +3884,11 @@
 
     if(sprOk('train')){
       const destH = 200;
-      const destW = destH * (SPR.train.naturalWidth / SPR.train.naturalHeight);
-      // headlight/front of the art at the logical leading edge; the trailing car runs off to the right
-      ctx.drawImage(SPR.train, x - 130, groundY - destH + 22, destW, destH);
+      // below half health the car swaps to its broken-window, cracked version (same framing)
+      const trainSpr = (hpRatio <= 0.5 && sprOk('train_damaged')) ? SPR.train_damaged : SPR.train;
+      const destW = destH * (trainSpr.naturalWidth / trainSpr.naturalHeight);
+      // front of the art at the logical leading edge; the rest of the car runs off to the right
+      ctx.drawImage(trainSpr, x - 130, groundY - destH + 22, destW, destH);
       ctx.save();
       ctx.translate(x, 0);
       drawTrainHpBar(0, y0-30, hpRatio);
@@ -4233,7 +4242,7 @@
             // a proper, unmistakably big explosion, anchored right on the
             // train's leftmost front edge - not wherever the bullet happened
             // to be when it crossed that line
-            const groundY = H * 0.82;
+            const groundY = H*GROUND_RATIO;
             const ex = trainFrontX;
             const ey = groundY - 90;
             pushFx(impactFlashes, { x: ex, y: ey, r: 30, life: 1, rot: Math.random()*Math.PI*2 });
