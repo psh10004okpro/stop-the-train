@@ -297,8 +297,8 @@
   <table>
     <tr><th>항목</th><th>규칙</th></tr>
     <tr><td>화면</td><td>가로 16:9 고정(최대 1920×1080). 선도부장은 왼쪽 16% 지점, 열차는 오른쪽에서. HUD는 좌상(열차 체력·골드·탄약)·우상(거리·연타)·하단(힌트)</td></tr>
-    <tr><td>배경</td><td>전투 배경은 지하철 승강장(배방역) 두 겹이다: <code>bg_back.jpg</code>(벽·기둥·역명판, 뒤) + <code>bg_front.png</code>(가까운 선로·자갈, 앞). 둘 다 화면 전체를 덮고, 선로 윗면 = 높이 78.5% 지면선(<code>GROUND_RATIO</code>)에 캐릭터 발이 닿는다. 원본은 <code>concept/ref/ref_bg_*.png</code></td></tr>
-    <tr><td>캐릭터</td><td>전신 스프라이트, 발이 지면선(78.5%)에 닿는다. 선도부장 176px, 동료 148~156, 체육부장 라인 132~140, 좀비 100, 시민 80. 열차 그림의 앞면은 판정선(x−130)에 맞춘다. 열차는 체력 50% 이하에서 파손 그림(<code>train_damaged</code>)으로 바뀐다. 총구 좌표는 그림에서 실측한 비율</td></tr>
+    <tr><td>배경</td><td>전투 배경은 지하철 승강장(배방역) 두 겹이다: <code>bg_back.jpg</code>(벽·기둥·역명판, 뒤) + <code>bg_front.png</code>(가까운 선로·자갈, 앞). 그리는 순서는 뒷배경 → 캐릭터·열차 → <b>앞배경</b>. 지면선(<code>GROUND_RATIO</code> 81.5%)이 앞 선로 윗면(78.3%)보다 조금 아래라 다리 끝과 열차 바퀴가 앞 선로에 살짝 가려진다. 원본은 <code>concept/ref/ref_bg_*.png</code></td></tr>
+    <tr><td>캐릭터</td><td>전신 스프라이트, 발은 지면선(81.5%), 끝부분은 앞배경 선로에 가려진다. 선도부장 176px, 동료 148~156, 체육부장 라인 132~140, 좀비 100, 시민 80. 열차 그림의 앞면은 판정선(x−130)에 맞춘다. 열차는 체력 50% 이하에서 파손 그림(<code>train_damaged</code>)으로 바뀐다. 총구 좌표는 그림에서 실측한 비율</td></tr>
     <tr><td>글꼴</td><td>영문 제목·배너(STOP THE TRAIN, STAGE 01, TRAIN BREACH)는 Cinzel. 나머지는 Noto Sans KR. 이미지 안에 글자를 굽지 않는다</td></tr>
     <tr><td>색</td><td>배경 남흑 <code>#07080f</code>·<code>#10131c</code> / 가죽 갈색 / 황동 <code>#c9a45c</code>·<code>#e8c37a</code> / 완장 노랑 <code>#f5d000</code>(강조·거리 바) / 크림 글자 <code>#f6ead0</code> / 경고·광고 빨강 <code>#e35d6a</code>. 열차 체력 바만 빨강</td></tr>
     <tr><td>UI 키트</td><td>갈색 가죽 + 황동 리벳 + 노란 완장 띠. 버튼은 왼쪽 끝에 띠가 감긴 캡슐(광고만 빨간 가죽). 판과 바는 <b>9-slice(border-image)</b>로 그린다 — 끝단·리벳·호루라기·동전은 고정, 가운데만 반복. 못 사는 버튼은 흐리게</td></tr>

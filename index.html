@@ -677,8 +677,9 @@
 
 <script>
 (function(){
-  // rail/platform line of the station backdrop (bg_front.png is opaque from 78.3% down)
-  const GROUND_RATIO = 0.785;
+  // feet/wheel line: a little below the top of bg_front (opaque from 78.3%), so the near
+  // rails drawn on top hide the bottom of legs and train wheels
+  const GROUND_RATIO = 0.815;
   const canvas = document.getElementById('game');
   const ctx = canvas.getContext('2d');
   const hpFill = document.getElementById('hpFill');
@@ -2658,8 +2659,7 @@
     if(sprOk('bg_back') && sprOk('bg_front')){
       // station backdrop in two layers: platform/walls behind, near rails + gravel in front
       ctx.drawImage(SPR.bg_back, 0, 0, W, H);
-      ctx.drawImage(SPR.bg_front, 0, 0, W, H);
-      return groundY;
+      return groundY; // bg_front is drawn over the actors in loop()
     }
     if(sprOk('bgPlay')){
       ctx.drawImage(SPR.bgPlay, 0, 0, W, H);
@@ -4775,6 +4775,9 @@
         drawDrone(px, groundY, Math.max(0, droneFlash));
       }
     }
+
+    // near rails + gravel in front of everyone standing on the track
+    if(sprOk('bg_back') && sprOk('bg_front')) ctx.drawImage(SPR.bg_front, 0, 0, W, H);
 
     updateBullets(dt);
     drawBullets();
