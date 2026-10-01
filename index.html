@@ -2214,7 +2214,8 @@
   }
 
   // full-body sprites now (feet on the ground line); heights are canvas px on the 16:9 stage
-  const PLAYER_SPR = { destH: 176, ax: 0.42, mNx: 0.94, mNy: 0.135 };
+  // user art: 00 idle (player.png), fire = 01,01 (kick + flash) -> 02 (settle) -> 00
+  const PLAYER_SPR = { destH: 176, ax: 0.38, mNx: 0.985, mNy: 0.19 };
   const COMPANION_SPR = { destH: 148, ax: 0.40, mNx: 0.94, mNy: 0.117 };
   const RAMBO_SPR = { destH: 156, ax: 0.42, mNx: 0.99, mNy: 0.32 };
   const TURRET_SPR = { destH: 60, ax: 0.5, mNx: 0.98, mNy: 0.3 };
